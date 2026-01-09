@@ -1,12 +1,37 @@
 {
   "name": "ng-images-preview",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "peerDependencies": {
     "@angular/common": ">=17.3.0",
     "@angular/core": ">=17.3.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
+  },
+  "description": "A lightweight, mobile-ready Angular 18+ image preview library with zoom, rotate, flip, and custom template support. Built with Signals and Vanilla CSS.",
+  "keywords": [
+    "angular",
+    "image-preview",
+    "images-preview",
+    "image-viewer",
+    "lightbox",
+    "gallery",
+    "zoom",
+    "rotate",
+    "mobile-ready",
+    "touch-support",
+    "signals",
+    "standalone",
+    "vanilla-css"
+  ],
+  "author": "lanxuexing <lanxuexing313wsr@163.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lanxuexing/ng-images-preview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lanxuexing/ng-images-preview/issues"
   },
   "sideEffects": false
 }
