@@ -16,7 +16,7 @@ A lightweight, modern, and accessible Image Preview library for Angular 18+, bui
 [中文版](./README.zh-CN.md) | English
 
 ## 🔗 Live Demo
-Check out the component in action: **[https://lanxuexing.github.io/ng-images-preview/](https://lanxuexing.github.io/ng-images-preview/)** (After deployment)
+Check out the component in action: **[https://lanxuexing.github.io/ng-images-preview/](https://lanxuexing.github.io/ng-images-preview/)**
 
 </div>
 

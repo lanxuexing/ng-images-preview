@@ -16,7 +16,7 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 [English](./README.md) | 中文
 
 ## 🔗 在线演示
-查看组件实际效果：**[https://lanxuexing.github.io/ng-images-preview/](https://lanxuexing.github.io/ng-images-preview/)** (部署后生效)
+查看组件实际效果：**[https://lanxuexing.github.io/ng-images-preview/](https://lanxuexing.github.io/ng-images-preview/)**
 
 </div>
 
