@@ -33,6 +33,8 @@ Check out the component in action: **[https://lanxuexing.github.io/ng-images-pre
 - 🔄 **Rotate & Flip**: Built-in toolbar for image manipulation.
 - 🧩 **Custom Template**: Complete control over the preview UI via `ng-template`.
 - ♿ **Accessible**: ARIA labels and focus management.
+- ⚡ **Performance**: Smart image preloading for smoother gallery navigation.
+- 🌏 **SSR Safe**: Fully compatible with Angular Universal/SSR.
 - 🌗 **Dark Mode Ready**: Inherits system preferences or app styles seamlessly.
 
 ## 📦 Installation
