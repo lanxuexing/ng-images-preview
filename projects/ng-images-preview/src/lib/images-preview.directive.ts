@@ -10,8 +10,10 @@ import {
     createComponent,
     ComponentRef,
     inject,
-    OnDestroy
+    OnDestroy,
+    PLATFORM_ID
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ImagesPreviewComponent } from './images-preview.component';
 
 @Directive({
@@ -28,6 +30,7 @@ export class ImagesPreviewDirective implements OnDestroy {
     private appRef = inject(ApplicationRef);
     private injector = inject(EnvironmentInjector);
     private el = inject(ElementRef<HTMLElement>);
+    private platformId = inject(PLATFORM_ID);
 
     @HostListener('click', ['$event'])
     onClick(event: Event): void {
@@ -59,6 +62,8 @@ export class ImagesPreviewDirective implements OnDestroy {
     readonly cursor = 'pointer';
 
     private openPreview(src: string): void {
+        if (!isPlatformBrowser(this.platformId)) return;
+
         // Create Component
         this.componentRef = createComponent(ImagesPreviewComponent, {
             environmentInjector: this.injector
