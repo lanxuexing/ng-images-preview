@@ -22,15 +22,19 @@ It currently supports single image preview, multi-image gallery navigation, swip
 
 ## Key Features
 - **Zero Config**: Helper directive auto-detects `src` from `<img>` tags.
-- **Gallery Mode**: Pass `[previewImages]` to enable swiping and arrow navigation.
-- **Mobile Optimized**: Inertia scrolling, rubber-banding, pinch-zoom, swipe-to-change.
-- **Customizable**: Styling via CSS variables, UI via `ng-template`.
+- **Gallery Mode**: Pass `[previewImages]` to enable swiping, arrow navigation, and a **Thumbnail Strip**.
+- **Mobile Optimized**: Inertia scrolling, rubber-banding, pinch-zoom, swipe-to-change, and **Pull-to-Close**.
+- **Customizable**: Styling via CSS variables, UI via `ng-template`, and **Toolbar Extensions**.
+- **Performance**: Smart **Buffer Preloading** (-1, 0, +1) for instant gallery navigation.
+- **Hybrid Support**: Support for both Standalone and **NgModule** applications.
 
-## Recent Changes (As of Jan 2026)
-1.  **Renaming**: Selectors renamed from `app*` to `ng*` (`ngImagesPreview`, `ng-images-preview`) to align with Angular library standards.
-2.  **UI Revamp**: Demo and Default UI updated with "Premium" aesthetics (Glassmorphism, deep shadows).
-3.  **Refactor**: Removed `Renderer2` in favor of native DOM for performance; Optimized touch history buffer.
-4.  **Fixes**: Fixed click interception by moving directive to container; Enabled swiping at 1x zoom.
+## Recent Changes (v2.0+)
+1.  **Architecture**: Rebuilt core with **Signals** and `computed` state for high-performance reactivity.
+2.  **Gallery Revamp**: Added auto-scrolling **Thumbnail Strip** and CSS-buffered **Slide Transitions**.
+3.  **Gestures**: Implemented multi-touch **Pinch-to-Zoom** and drag-to-dismiss **Pull-to-Close**.
+4.  **Extensibility**: Added `toolbarExtensions` to allow custom buttons (e.g., Download) in the toolbar.
+5.  **Hybrid Compatibility**: Created `NgImagesPreviewModule` to support legacy Angular applications.
+6.  **SSR**: Ensure all browser globals are guarded with `isPlatformBrowser`.
 
 ## Development Guidelines
 - **Run Demo**: `npm start`

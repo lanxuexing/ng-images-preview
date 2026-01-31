@@ -58,3 +58,10 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - **Files**: `kebab-case` (e.g., `user-profile.component.ts`).
 - **Classes**: `PascalCase` (e.g., `UserProfileComponent`).
 - **Selectors**: `kebab-case` with prefix (e.g., `ng-images-preview`).
+
+## Library Specific Patterns
+- **Signal Inputs**: Use `input()` and `input.required()` where possible. Avoid `@Input()`.
+- **Hybrid Support**: When adding new standalone components/directives, ensure they are exported in `NgImagesPreviewModule`.
+- **Performance**: Use `computed` for all derived UI state. Use `effect` only for side effects (like preloading).
+- **SSR Safety**: Always inject `PLATFORM_ID` and use `isPlatformBrowser(platformId)` before accessing `window` or `document`.
+- **Vanilla CSS**: Prefer CSS variables (`--var`) over inline styles for library theming.
