@@ -28,7 +28,9 @@ Check out the component in action: **[https://lanxuexing.github.io/ng-images-pre
 - 🎨 **Vanilla CSS**: Zero dependencies, fully customizable via CSS variables.
 - 🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
 - 📱 **Mobile Ready**: Swipe to navigate, double-tap to zoom, pinch-to-zoom gestures.
+- 🖱️ **PC Friendly**: Mouse horizontal swipe navigation with inertia.
 - 👆 **Pull-to-Close**: Drag down to close the preview (like native apps).
+- 🎞️ **Premium Transitions**: Refined 400ms cubic-bezier easing for a high-end feel.
 - 🎞️ **Thumbnail Strip**: Quick preview and navigation with an auto-scrolling strip.
 - 🧩 **Toolbar Extensions**: Inject custom buttons (like Download) into the toolbar.
 - 🤝 **Hybrid Support**: Fully compatible with both Standalone and NgModule-based apps.
@@ -169,6 +171,8 @@ Take full control of the UI by providing a template.
 | `previewImages` | `string[]` | `[]` | List of image URLs for gallery navigation. |
 | `previewTemplate` | `TemplateRef` | `undefined` | Custom template to render instead of the default viewer. |
 | `previewSrcsets` | `string[]` | `[]` | List of `srcset` strings for gallery navigation. |
+| `showNavigation` | `boolean` | `true` | Whether to show next/prev arrow buttons. |
+| `showCounter` | `boolean` | `true` | Whether to show the image counter (e.g. "1 / 5"). |
 | `showThumbnails` | `boolean` | `true` | Whether to show the thumbnail strip. |
 | `showToolbar` | `boolean` | `true` | Whether to show the top toolbar. |
 | `toolbarExtensions`| `TemplateRef` | `undefined` | Custom template for toolbar buttons. |
@@ -184,6 +188,8 @@ If you use the component directly:
 | `initialIndex` | `number` | `0` | Initial image index in gallery. |
 | `customTemplate` | `TemplateRef` | `undefined` | Custom template for the overlay content. |
 | `srcsets` | `string[]` | `[]` | List of `srcset` strings for images. |
+| `showNavigation` | `boolean` | `true` | Whether to show next/prev arrow buttons. |
+| `showCounter` | `boolean` | `true` | Whether to show the image counter (e.g. "1 / 5"). |
 | `showThumbnails` | `boolean` | `true` | Whether to show the thumbnail strip. |
 | `showToolbar` | `boolean` | `true` | Whether to show the top toolbar. |
 | `toolbarExtensions`| `TemplateRef` | `undefined` | Custom template for toolbar buttons. |

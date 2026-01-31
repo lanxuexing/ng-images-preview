@@ -28,7 +28,9 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 - 🎨 **原生 CSS**: 无第三方依赖，可通过 CSS 变量完全定制。
 - 🖼️ **多图画廊**: 支持箭头导航或滑动切换图片列表。
 - 📱 **移动端就绪**: 支持滑动切换、双击缩放、捏合缩放手势。
+- 🖱️ **鼠标手势适配**: PC 端支持鼠标横向滑动切换图片，并支持惯性效果。
 - 👆 **下拉关闭**: 向下拖拽即可关闭预览 (类原生体验)。
+- 🎞️ **高级转场动画**: 精调 400ms 贝塞尔曲线，带来更丝滑、更具质感的切换体验。
 - 🎞️ **缩略图栏**: 支持自动滚动缩略图，快速预览与切换。
 - 🧩 **工具栏扩展**: 支持通过模板注入自定义按钮 (如下载)。
 - 🤝 **混合支持**: 完美兼容 Standalone 组件和传统的 NgModule 模式。
@@ -169,6 +171,8 @@ export class AppModule {}
 | `previewImages` | `string[]` | `[]` | 用于画廊导航的图片 URL 列表。 |
 | `previewTemplate` | `TemplateRef` | `undefined` | 用于替代默认查看器的自定义模板。 |
 | `previewSrcsets` | `string[]` | `[]` | 用于画廊导航的 `srcset` 字符串列表。 |
+| `showNavigation` | `boolean` | `true` | 是否显示侧边的上一张/下一张切换按钮。 |
+| `showCounter` | `boolean` | `true` | 是否显示图片计数器 (如 "1 / 5")。 |
 | `showThumbnails` | `boolean` | `true` | 是否显示缩略图栏。 |
 | `showToolbar` | `boolean` | `true` | 是否显示顶部工具栏。 |
 | `toolbarExtensions`| `TemplateRef` | `undefined` | 工具栏按钮的自定义模板。 |
@@ -184,6 +188,8 @@ export class AppModule {}
 | `initialIndex` | `number` | `0` | 画廊初始索引。 |
 | `customTemplate` | `TemplateRef` | `undefined` | 覆盖层内容的自定义模板。 |
 | `srcsets` | `string[]` | `[]` | 图片的 `srcset` 列表。 |
+| `showNavigation` | `boolean` | `true` | 是否显示侧边的上一张/下一张切换按钮。 |
+| `showCounter` | `boolean` | `true` | 是否显示图片计数器 (如 "1 / 5")。 |
 | `showThumbnails` | `boolean` | `true` | 是否显示缩略图栏。 |
 | `showToolbar` | `boolean` | `true` | 是否显示顶部工具栏。 |
 | `toolbarExtensions`| `TemplateRef` | `undefined` | 工具栏按钮的自定义模板。 |
