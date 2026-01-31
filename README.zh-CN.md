@@ -243,6 +243,7 @@ export class AppModule {}
   --ng-img-thumb-gap: 8px;
   --ng-img-thumb-border-radius: 6px;
   --ng-img-thumb-active-border: white;
+  --ng-img-thumb-z-index: 55; /* 默认值为基础 z-index + 5 */
   
   /* 其他 */
   --ng-img-item-bg: rgba(0, 0, 0, 0.3);

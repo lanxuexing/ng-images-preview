@@ -243,6 +243,7 @@ You can customize the look and feel by overriding these CSS variables in your `s
   --ng-img-thumb-gap: 8px;
   --ng-img-thumb-border-radius: 6px;
   --ng-img-thumb-active-border: white;
+  --ng-img-thumb-z-index: 55; /* Default is base + 5 */
   
   /* Misc */
   --ng-img-item-bg: rgba(0, 0, 0, 0.3);

@@ -15,6 +15,7 @@
     --ng-img-thumb-gap: 8px;
     --ng-img-thumb-border-radius: 6px;
     --ng-img-thumb-active-border: white;
+    --ng-img-thumb-z-index: calc(var(--ng-img-z-index) + 5);
 }
 
 .overlay {
@@ -237,7 +238,7 @@
     scroll-behavior: smooth;
     scrollbar-width: none;
     /* Hide scrollbar Firefox */
-    z-index: 55;
+    z-index: var(--ng-img-thumb-z-index);
     font-size: 0;
     /* Remove whitespace gaps */
 }
