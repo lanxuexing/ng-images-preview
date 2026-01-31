@@ -5,7 +5,7 @@ import {
     computed,
     input,
     signal,
-    viewChild,
+    viewChildren,
     ChangeDetectionStrategy,
     TemplateRef,
     inject,
@@ -15,6 +15,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { isPlatformBrowser } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { PREVIEW_ICONS } from './icons';
 
 export interface ImagesPreviewState {
     src: string;
@@ -37,12 +39,40 @@ export interface ImagesPreviewActions {
     close: () => void;
 }
 
+/**
+ * Configuration for the toolbar.
+ */
+export interface ToolbarConfig {
+    showZoom?: boolean;
+    showRotate?: boolean;
+    showFlip?: boolean;
+}
+
+/**
+ * Context passed to the custom template.
+ */
+export interface ImagesPreviewContext {
+    $implicit: ImagesPreviewState;
+    actions: ImagesPreviewActions;
+}
+
 interface TrackingPoint {
     x: number;
     y: number;
     time: number;
 }
 
+interface ImageBufferItem {
+    src: string;
+    index: number;
+    offset: number; // -1 (prev), 0 (curr), 1 (next)
+    srcset?: string;
+}
+
+/**
+ * Image Preview Overlay Component.
+ * Displays images in a full-screen overlay with zoom, rotate, and pan capabilities.
+ */
 @Component({
     selector: 'ng-images-preview',
     standalone: true,
@@ -56,6 +86,7 @@ interface TrackingPoint {
       tabindex="0"
       role="button"
       aria-label="Close preview overlay"
+      [style.background-color]="overlayBackground()"
     >
       <!-- Custom Template Support -->
       @if (customTemplate(); as template) {
@@ -64,7 +95,7 @@ interface TrackingPoint {
         ></ng-container>
       } @else {
         <!-- Loading -->
-        @if (isLoading()) {
+        @if (!loadedImages().has(src()) && !hasError()) {
           <div class="loader">Loading...</div>
         }
 
@@ -80,27 +111,32 @@ interface TrackingPoint {
           (touchstart)="onTouchStart($event)"
           tabindex="-1"
         >
-          <img
-            #imgRef
-            [src]="activeSrc()"
-            [class.opacity-0]="isLoading() || hasError()"
-            class="preview-image"
-            [class.dragging]="isDragging()"
-            [class.zoom-in]="scale() === 1"
-            [class.zoom-out]="scale() > 1"
-            [style.transform]="transformStyle()"
-            (load)="onImageLoad()"
-            (error)="onImageError()"
-            (mousedown)="onMouseDown($event)"
-            (click)="$event.stopPropagation()"
-            draggable="false"
-            alt="Preview"
-          />
+          @for (item of activeBuffer(); track item.src) {
+            <img
+              #imgRef
+              [src]="item.src"
+              [srcset]="item.srcset || ''"
+              [class.opacity-0]="item.offset === 0 && (!loadedImages().has(item.src) || hasError())"
+              class="preview-image"
+              [class.dragging]="isDragging()"
+              [class.inertia]="isInertia()"
+              [class.pinching]="isPinching()"
+              [class.zoom-in]="scale() === 1"
+              [class.zoom-out]="scale() > 1"
+              [class.hidden]="item.offset !== 0 && scale() > 1"
+              [style.transform]="getTransform(item.offset)"
+              (load)="onImageLoad(item.src)"
+              (error)="onImageError(item.src)"
+              (mousedown)="onMouseDown($event)"
+              (click)="$event.stopPropagation()"
+              draggable="false"
+              alt="Preview"
+            />
+          }
         </div>
 
         <!-- Close Button -->
-        <button class="close-btn" (click)="close()" aria-label="Close preview">
-          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        <button class="close-btn" (click)="close()" aria-label="Close preview" [innerHTML]="icons.close">
         </button>
 
         <!-- Navigation -->
@@ -112,8 +148,8 @@ interface TrackingPoint {
               (click)="prev(); $event.stopPropagation()"
               (mousedown)="$event.stopPropagation()"
               aria-label="Previous image"
+              [innerHTML]="icons.prev"
             >
-              <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
             </button>
           }
           <!-- Check if not last -->
@@ -123,8 +159,8 @@ interface TrackingPoint {
               (click)="next(); $event.stopPropagation()"
               (mousedown)="$event.stopPropagation()"
               aria-label="Next image"
+              [innerHTML]="icons.next"
             >
-              <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
             </button>
           }
 
@@ -133,36 +169,57 @@ interface TrackingPoint {
         }
 
         <!-- Toolbar -->
+        <!-- Toolbar -->
+        @if (showToolbar()) {
         <div
           class="toolbar"
           (click)="$event.stopPropagation()"
           (keydown)="onToolbarKey($event)"
           tabindex="0"
         >
-          <!-- Flip H -->
-          <button class="toolbar-btn" (click)="flipHorizontal()" aria-label="Flip Horizontal">
-            <svg viewBox="0 0 24 24"><path d="M15 21h2v-2h-2v2zm4-12h2V7h-2v2zM3 5v14c0 1.1.9 2 2 2h4v-2H5V5h4V3H5c-1.1 0-2 .9-2 2zm16-2v2h2c0-1.1-.9-2-2-2zm-8 20h2V1h-2v22zm8-6h2v-2h-2v2zM15 5h2V3h-2v2zm4 8h2v-2h-2v2zm0 8c1.1 0 2-.9 2-2h-2v2z"/></svg>
-          </button>
-          <!-- Flip V -->
-          <button class="toolbar-btn" (click)="flipVertical()" aria-label="Flip Vertical">
-            <svg viewBox="0 0 24 24"><path d="M7 21h2v-2H7v2zM3 9h2V7H3v2zm12 12h2v-2h-2v2zm4-12h2V7h-2v2zm-4 4h2v-4h-2v4zm-8-8h2V3H7v2zm8 0h2V3h-2v2zm-4 8h4v-4h-4v4zM3 15h2v-2H3v2zm12-4h2v-4H3v4h2v-2h10v2zM7 3v2h2V3H7zm8 20h2v-2h-2v2zm-4 0h2v-2h-2v2zm4-12h2v-2h-2v2zM3 19c0 1.1.9 2 2 2h2v-2H5v-2H3v2zm16-6h2v-2h-2v2zm0 4v2c0 1.1-.9 2-2 2h-2v-2h2v-2h2zM5 3c-1.1 0-2 .9-2 2h2V3z"/></svg>
-          </button>
-          <!-- Rotate Left -->
-          <button class="toolbar-btn" (click)="rotateLeft()" aria-label="Rotate Left">
-            <svg viewBox="0 0 24 24"><path d="M7.11 8.53L5.7 7.11C4.8 8.27 4.24 9.61 4.07 11h2.02c.14-.87.49-1.72 1.02-2.47zM6.09 13H4.07c.17 1.39.72 2.73 1.62 3.89l1.41-1.42c-.52-.75-.87-1.59-1.01-2.47zm1.01 5.32c1.16.9 2.51 1.44 3.9 1.61V17.9c-.87-.15-1.71-.49-2.46-1.03L7.1 18.32zM13 4.07V1L8.45 5.55 13 10V6.09c2.84.48 5 2.94 5 5.91s-2.16 5.43-5 5.91v2.02c3.95-.49 7-3.85 7-7.93s-3.05-7.44-7-7.93z"/></svg>
-          </button>
-          <!-- Rotate Right -->
-          <button class="toolbar-btn" (click)="rotateRight()" aria-label="Rotate Right">
-            <svg viewBox="0 0 24 24"><path d="M15.55 5.55L11 1v3.07C7.06 4.56 4 7.92 4 12s3.05 7.44 7 7.93v-2.02c-2.84-.48-5-2.94-5-5.91s2.16-5.43 5-5.91V10l4.55-4.45zM19.93 11c-.17-1.39-.72-2.73-1.62-3.89l-1.42 1.42c.54.75.88 1.6 1.02 2.47h2.02zM13 17.9v2.02c1.39-.17 2.74-.71 3.9-1.61l-1.44-1.44c-.75.54-1.59.89-2.46 1.03zm3.89-2.42l1.42 1.41c.9-1.16 1.45-2.5 1.62-3.89h-2.02c-.14.87-.48 1.72-1.02 2.48z"/></svg>
-          </button>
-          <!-- Zoom Out -->
-          <button class="toolbar-btn" (click)="zoomOut()" aria-label="Zoom Out">
-             <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
-          </button>
-          <!-- Zoom In -->
-          <button class="toolbar-btn" (click)="zoomIn()" aria-label="Zoom In">
-             <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-          </button>
+          <!-- Flip -->
+          @if (toolbarConfig().showFlip) {
+            <button class="toolbar-btn" (click)="flipHorizontal()" aria-label="Flip Horizontal" [innerHTML]="icons.flipH">
+            </button>
+            <button class="toolbar-btn" (click)="flipVertical()" aria-label="Flip Vertical" [innerHTML]="icons.flipV">
+            </button>
+          }
+          
+          <!-- Extensions (Custom Buttons) -->
+          @if (toolbarExtensions()) {
+            <ng-container *ngTemplateOutlet="toolbarExtensions(); context: { $implicit: images()![currentIndex()] }"></ng-container>
+          }
+          <!-- Rotate -->
+          @if (toolbarConfig().showRotate) {
+            <button class="toolbar-btn" (click)="rotateLeft()" aria-label="Rotate Left" [innerHTML]="icons.rotateLeft">
+            </button>
+            <button class="toolbar-btn" (click)="rotateRight()" aria-label="Rotate Right" [innerHTML]="icons.rotateRight">
+            </button>
+          }
+          <!-- Zoom -->
+          @if (toolbarConfig().showZoom) {
+            <button class="toolbar-btn" (click)="zoomOut()" aria-label="Zoom Out" [innerHTML]="icons.zoomOut">
+            </button>
+            <button class="toolbar-btn" (click)="zoomIn()" aria-label="Zoom In" [innerHTML]="icons.zoomIn">
+            </button>
+          }
+        </div>
+        }
+      }
+      
+      <!-- Thumbnails -->
+      @if (images() && images()!.length > 1 && showThumbnails()) {
+        <div class="thumbnail-strip" (click)="$event.stopPropagation()">
+            @for (img of images(); track img; let i = $index) {
+                <div 
+                    #thumbRef
+                    class="thumbnail-item" 
+                    [class.active]="i === currentIndex()"
+                    (click)="jumpTo(i)"
+                >
+                    <img [src]="img" loading="lazy" alt="Thumbnail">
+                </div>
+            }
         </div>
       }
     </div>
@@ -188,32 +245,146 @@ interface TrackingPoint {
     },
 })
 export class ImagesPreviewComponent {
+    /**
+     * The image source to display.
+     * @required
+     */
     src = input.required<string>();
+
+    /**
+     * List of image URLs for gallery navigation.
+     */
     images = input<string[]>();
+
+    /**
+     * Optional srcset for the single image `src`.
+     */
+    srcset = input<string>();
+
+    /**
+     * List of srcsets corresponding to the `images` array.
+     * Must be 1:1 mapped with `images`.
+     */
+    srcsets = input<string[]>();
+
+    /**
+     * Initial index for gallery navigation.
+     * @default 0
+     */
     initialIndex = input(0);
-    customTemplate = input<TemplateRef<unknown>>();
+
+    /**
+     * DOMRect of the element that opened the preview.
+     * Used for FLIP animation calculation.
+     */
+    openerRect = input<DOMRect | undefined>(undefined);
+
+    /**
+     * Custom template to render instead of the default viewer.
+     * Exposes `ImagesPreviewContext`.
+     */
+    customTemplate = input<TemplateRef<ImagesPreviewContext>>();
+
+    /**
+     * Configuration for the toolbar buttons.
+     */
+    toolbarConfig = input<ToolbarConfig>({
+        showZoom: true,
+        showRotate: true,
+        showFlip: true,
+    });
+
+    /**
+     * Callback function called when the preview is closed.
+     */
     closeCallback: () => void = () => {
         /* noop */
     };
 
-    imgRef = viewChild<ElementRef<HTMLImageElement>>('imgRef');
+    imgRefs = viewChildren<ElementRef<HTMLImageElement>>('imgRef');
+
+    thumbRefs = viewChildren<ElementRef<HTMLElement>>('thumbRef');
 
     // State signals
     currentIndex = signal(0);
-    isLoading = signal(true);
+    // isLoading = signal(true); // Replaced by per-image tracking
     hasError = signal(false);
 
-    activeSrc = computed(() => {
+    // Track loaded state for each image source
+    loadedImages = signal<Set<string>>(new Set());
+
+    // Toggle thumbnails
+    showThumbnails = input(true);
+
+    // Toggle toolbar
+    showToolbar = input(true);
+
+    // Toolbar custom extensions
+    toolbarExtensions = input<TemplateRef<any> | null>(null);
+
+    activeBuffer = computed<ImageBufferItem[]>(() => {
         const imgs = this.images();
-        if (imgs && imgs.length > 0) {
-            return imgs[this.currentIndex()];
+        const srcsets = this.srcsets();
+        const current = this.currentIndex();
+
+        // Single image or fallback
+        if (!imgs || imgs.length === 0) {
+            return [{ src: this.src(), index: 0, offset: 0, srcset: this.srcset() }];
         }
-        return this.src();
+
+        const buffer: ImageBufferItem[] = [];
+        const total = imgs.length;
+
+        // Helper to get srcset safely
+        const getSrcset = (i: number) => (srcsets && srcsets[i]) ? srcsets[i] : undefined;
+
+        // Prev (-1)
+        if (current > 0) {
+            buffer.push({
+                src: imgs[current - 1],
+                index: current - 1,
+                offset: -1,
+                srcset: getSrcset(current - 1)
+            });
+        }
+
+        // Current (0)
+        buffer.push({
+            src: imgs[current],
+            index: current,
+            offset: 0,
+            srcset: getSrcset(current)
+        });
+
+        // Next (+1)
+        if (current < total - 1) {
+            buffer.push({
+                src: imgs[current + 1],
+                index: current + 1,
+                offset: 1,
+                srcset: getSrcset(current + 1)
+            });
+        }
+
+        return buffer;
     });
 
     private platformId = inject(PLATFORM_ID);
+    private sanitizer = inject(DomSanitizer);
+
+    // Icons map with SafeHtml
+    icons: { [key in keyof typeof PREVIEW_ICONS]: SafeHtml };
 
     constructor() {
+        // Sanitize icons once
+        this.icons = Object.keys(PREVIEW_ICONS).reduce((acc, key) => {
+            acc[key as keyof typeof PREVIEW_ICONS] = this.sanitizer.bypassSecurityTrustHtml(
+                PREVIEW_ICONS[key as keyof typeof PREVIEW_ICONS]
+            );
+            return acc;
+        }, {} as { [key in keyof typeof PREVIEW_ICONS]: SafeHtml });
+
+
         // defined in class body usually, but here to show logical grouping
         effect(
             () => {
@@ -227,7 +398,6 @@ export class ImagesPreviewComponent {
             () => {
                 // Reset state when index changes
                 this.currentIndex();
-                this.isLoading.set(true);
                 this.hasError.set(false);
                 this.reset(); // Reset zoom/rotate
             },
@@ -240,19 +410,57 @@ export class ImagesPreviewComponent {
             const images = this.images();
 
             if (isPlatformBrowser(this.platformId) && images && images.length > 0) {
+                const srcsets = this.srcsets();
+                const getSrcset = (i: number) => (srcsets && srcsets[i]) ? srcsets[i] : undefined;
+
                 // Next
                 if (index < images.length - 1) {
                     const img = new Image();
+                    const s = getSrcset(index + 1);
+                    if (s) img.srcset = s;
                     img.src = images[index + 1];
                 }
                 // Prev
                 if (index > 0) {
                     const img = new Image();
+                    const s = getSrcset(index - 1);
+                    if (s) img.srcset = s;
                     img.src = images[index - 1];
                 }
             }
         });
+
+        effect(() => {
+            // Handle FLIP on open
+            const opener = this.openerRect();
+            if (opener && !this.flipAnimDone) {
+                // Defer to let the view render so we know final position
+                setTimeout(() => this.runFlipAnimation(opener));
+            }
+        });
+
+        // Auto-scroll thumbnails
+        effect(() => {
+            const index = this.currentIndex();
+            const show = this.showThumbnails();
+            const refs = this.thumbRefs();
+
+            if (show && refs && refs[index]) {
+                const el = refs[index].nativeElement;
+                const container = el.parentElement;
+
+                if (container) {
+                    const scrollLeft = el.offsetLeft + el.offsetWidth / 2 - container.offsetWidth / 2;
+                    container.scrollTo({
+                        left: scrollLeft,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
     }
+
+    private flipAnimDone = false;
 
     scale = signal(1);
     translateX = signal(0);
@@ -262,11 +470,12 @@ export class ImagesPreviewComponent {
     flipV = signal(false);
 
     isDragging = signal(false);
+    isInertia = signal(false);
 
     // Touch state
     private initialPinchDistance = 0;
     private initialScale = 1;
-    private isPinching = false;
+    isPinching = signal(false);
 
     // Computed state object for template
     state = computed<ImagesPreviewState>(() => ({
@@ -275,7 +484,7 @@ export class ImagesPreviewComponent {
         rotate: this.rotate(),
         flipH: this.flipH(),
         flipV: this.flipV(),
-        isLoading: this.isLoading(),
+        isLoading: !this.loadedImages().has(this.src() || '') && !this.hasError(),
         hasError: this.hasError(),
     }));
 
@@ -307,19 +516,107 @@ export class ImagesPreviewComponent {
     private cachedConstraints: { maxX: number; maxY: number } | null = null;
     private lastTimestamp = 0;
     private rafId: number | null = null;
-    private readonly FRICTION = 0.92; // Heavier feel
+    private readonly FRICTION = 0.95; // Super smooth glide
     private readonly VELOCITY_THRESHOLD = 0.01;
     private readonly MAX_VELOCITY = 3; // Cap speed to prevent teleporting
 
-    transformStyle = computed(() => {
-        const scale = this.scale();
-        const x = this.translateX();
-        const y = this.translateY();
-        const rotate = this.rotate();
-        const scaleX = this.flipH() ? -1 : 1;
-        const scaleY = this.flipV() ? -1 : 1;
+    // Updated transform logic for slide buffer
+    getTransform(offset: number) {
+        const viewportWidth = window.innerWidth;
+        const spacing = 16; // Gap between images
+        const baseOffset = offset * (viewportWidth + spacing);
 
-        return `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotate}deg) scaleX(${scaleX}) scaleY(${scaleY})`;
+        // Dynamic movement from touch/inertia
+        // Global translateX applies to the whole "track"
+        const x = this.translateX() + baseOffset;
+
+        // Y-axis drag (Pull-to-Close) usually only affects the active image visually,
+        // but moving the whole track is acceptable and simpler.
+        // Ideally, neighbors stay at Y=0.
+        const effectiveY = offset === 0 ? this.translateY() : 0;
+
+        const effectiveScale = offset === 0 ? this.scale() : 1;
+        const effectiveRotate = offset === 0 ? this.rotate() : 0;
+        const flipH = offset === 0 ? this.flipH() : false;
+        const flipV = offset === 0 ? this.flipV() : false;
+
+        const scaleX = flipH ? -1 : 1;
+        const scaleY = flipV ? -1 : 1;
+
+        // FLIP override
+        if (offset === 0) {
+            const flip = this.flipTransform();
+            if (flip) return flip;
+        }
+
+        return `translate3d(${x}px, ${effectiveY}px, 0) scale(${effectiveScale}) rotate(${effectiveRotate}deg) scaleX(${scaleX}) scaleY(${scaleY})`;
+    }
+
+    // FLIP State
+    private flipTransform = signal('');
+
+    // Helper to get current active image element
+    private getCurrentImageElement(): HTMLImageElement | undefined {
+        const buffer = this.activeBuffer();
+        const index = buffer.findIndex((item) => item.offset === 0);
+        if (index === -1) return undefined;
+        return this.imgRefs()[index]?.nativeElement;
+    }
+
+    private runFlipAnimation(opener: DOMRect) {
+        if (!isPlatformBrowser(this.platformId)) return;
+
+        const imgEl = this.getCurrentImageElement();
+        if (!imgEl) return;
+
+        // 1. First: Final state is already rendered (centered, max fit)
+        const finalRect = imgEl.getBoundingClientRect();
+
+        // 2. Invert: Calculate scale and translate to match opener
+        const scaleX = opener.width / finalRect.width;
+        const scaleY = opener.height / finalRect.height;
+        // Note: we use the larger scale to crop? 
+        // Or fit? 
+        // Usually we want to fit.
+        // Let's matching fitting.
+
+        // Actually, most simple FLIP matches dimensions exactly.
+        // But aspect ratios might differ.
+        // Let's just match the rect exactly.
+
+        const deltaX = opener.left - finalRect.left + (opener.width - finalRect.width) / 2;
+        const deltaY = opener.top - finalRect.top + (opener.height - finalRect.height) / 2;
+
+        // Apply Invert Transform immediately (no transition)
+        imgEl.style.transition = 'none';
+        this.flipTransform.set(`translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`);
+
+        // Force Reflow
+        imgEl.offsetHeight;
+
+        // 3. Play
+        requestAnimationFrame(() => {
+            // Enable transition
+            imgEl.style.transition = 'transform 300ms cubic-bezier(0.2, 0, 0.2, 1)';
+            // Remove override (animates to Final)
+            this.flipTransform.set('');
+            this.flipAnimDone = true;
+
+            // CLEANUP: Remove transition after animation wraps up so dragging/panning is instant
+            setTimeout(() => {
+                imgEl.style.transition = '';
+            }, 300);
+        });
+    }
+
+    overlayBackground = computed(() => {
+        const y = Math.abs(this.translateY());
+        const scale = this.scale();
+        if (scale === 1 && y > 0) {
+            const opacity = Math.max(0, 0.95 - y / 400); // Fade out as we drag down
+            return `rgba(0, 0, 0, ${opacity})`;
+        }
+        return 'var(--ng-img-background)';
     });
 
     @HostListener('document:keydown.escape')
@@ -349,7 +646,7 @@ export class ImagesPreviewComponent {
             return;
         }
 
-        const img = this.imgRef()?.nativeElement;
+        const img = this.getCurrentImageElement();
         if (!img) {
             this.translateX.set(nextX);
             this.translateY.set(nextY);
@@ -357,6 +654,14 @@ export class ImagesPreviewComponent {
         }
 
         const scale = this.scale();
+
+        // If scale is 1, we allow free movement for Pull-to-Close and Swipe Nav
+        if (scale === 1) {
+            this.translateX.set(nextX);
+            this.translateY.set(nextY);
+            return;
+        }
+
         const rotate = Math.abs(this.rotate() % 180);
         const isRotated = rotate === 90;
 
@@ -381,7 +686,7 @@ export class ImagesPreviewComponent {
     }
 
     onTouchMove(event: TouchEvent) {
-        if (!this.isDragging() && !this.isPinching) return;
+        if (!this.isDragging() && !this.isPinching()) return;
 
         // Prevent default to stop page scrolling/zooming
         if (event.cancelable) {
@@ -391,7 +696,7 @@ export class ImagesPreviewComponent {
         const touches = event.touches;
 
         // One finger: Pan
-        if (touches.length === 1 && this.isDragging() && !this.isPinching) {
+        if (touches.length === 1 && this.isDragging() && !this.isPinching()) {
             const now = Date.now();
 
             // Add point to history
@@ -423,10 +728,29 @@ export class ImagesPreviewComponent {
             // Use cached constraints to avoid reflows
             const constraints = this.cachedConstraints || this.getConstraints();
 
-            if (nextX > constraints.maxX) {
-                nextX = constraints.maxX + (nextX - constraints.maxX) * 0.5;
-            } else if (nextX < -constraints.maxX) {
-                nextX = -constraints.maxX + (nextX + constraints.maxX) * 0.5;
+            // At scale 1, we want linear drag for pull-to-close (Y) and swipe (X)
+            // But we can keep rubber banding if it feels good.
+            // For Pull-to-Close, standard is 1:1 or slightly resisted. 
+            // Let's stick to the current logic which applies resistance if "out of bounds".
+            // Since at scale 1 bounds are 0, it will apply resistance immediately.
+            // We want easier pull.
+
+            if (this.scale() === 1) {
+                // Reduce resistance
+                nextY = currentY + deltaY;
+                nextX = currentX + deltaX;
+            } else {
+                if (nextX > constraints.maxX) {
+                    nextX = constraints.maxX + (nextX - constraints.maxX) * 0.5;
+                } else if (nextX < -constraints.maxX) {
+                    nextX = -constraints.maxX + (nextX + constraints.maxX) * 0.5;
+                }
+
+                if (nextY > constraints.maxY) {
+                    nextY = constraints.maxY + (nextY - constraints.maxY) * 0.5;
+                } else if (nextY < -constraints.maxY) {
+                    nextY = -constraints.maxY + (nextY + constraints.maxY) * 0.5;
+                }
             }
 
             if (nextY > constraints.maxY) {
@@ -443,19 +767,50 @@ export class ImagesPreviewComponent {
         }
 
         // Two fingers: Pinch Zoom
-        if (touches.length === 2) {
+        if (touches.length === 2 && this.initialPinchDistance > 0) {
             const distance = this.getDistance(touches);
-            if (this.initialPinchDistance > 0) {
-                const scaleFactor = distance / this.initialPinchDistance;
-                const newScale = Math.min(
-                    Math.max(this.initialScale * scaleFactor, this.MIN_SCALE),
-                    this.MAX_SCALE,
-                );
-                this.scale.set(newScale);
+            const scaleFactor = distance / this.initialPinchDistance;
 
-                // Re-clamp position after zoom
-                this.clampPosition();
+            // Calculate new scale with limits
+            const rawNewScale = this.initialScale * scaleFactor;
+            const newScale = Math.min(Math.max(rawNewScale, this.MIN_SCALE), this.MAX_SCALE);
+
+            // Calculate new translation to keep focal point fixed
+            const effectiveRatio = newScale / this.initialScale;
+            const currentCenter = this.getCenter(touches);
+            const cx = currentCenter.x - window.innerWidth / 2;
+            const cy = currentCenter.y - window.innerHeight / 2;
+
+            const sx = this.initialPinchCenter.x - window.innerWidth / 2;
+            const sy = this.initialPinchCenter.y - window.innerHeight / 2;
+
+            let newTx = cx - (sx - this.initialTranslateX) * effectiveRatio;
+            let newTy = cy - (sy - this.initialTranslateY) * effectiveRatio;
+
+            // --- Clamp Logic (Inline for atomicity) ---
+            const img = this.getCurrentImageElement();
+            if (img) {
+                const rotate = Math.abs(this.rotate() % 180);
+                const isRotated = rotate === 90;
+                const baseWidth = img.offsetWidth;
+                const baseHeight = img.offsetHeight;
+
+                const currentWidth = (isRotated ? baseHeight : baseWidth) * newScale;
+                const currentHeight = (isRotated ? baseWidth : baseHeight) * newScale;
+
+                const maxTx = Math.max(0, (currentWidth - window.innerWidth) / 2);
+                const maxTy = Math.max(0, (currentHeight - window.innerHeight) / 2);
+
+                if (currentWidth <= window.innerWidth) newTx = 0;
+                else if (Math.abs(newTx) > maxTx) newTx = Math.sign(newTx) * maxTx;
+
+                if (currentHeight <= window.innerHeight) newTy = 0;
+                else if (Math.abs(newTy) > maxTy) newTy = Math.sign(newTy) * maxTy;
             }
+
+            this.scale.set(newScale);
+            this.translateX.set(newTx);
+            this.translateY.set(newTy);
         }
     }
 
@@ -467,7 +822,7 @@ export class ImagesPreviewComponent {
 
         if (!isPlatformBrowser(this.platformId)) return { maxX: 0, maxY: 0 };
 
-        const img = this.imgRef()?.nativeElement;
+        const img = this.getCurrentImageElement();
         if (!img) return { maxX: 0, maxY: 0 };
 
         const scale = this.scale();
@@ -492,7 +847,7 @@ export class ImagesPreviewComponent {
     private clampPosition() {
         if (!isPlatformBrowser(this.platformId)) return;
 
-        const img = this.imgRef()?.nativeElement;
+        const img = this.getCurrentImageElement();
         if (!img) return;
 
         const scale = this.scale();
@@ -535,6 +890,7 @@ export class ImagesPreviewComponent {
     }
 
     private startInertia() {
+        this.isInertia.set(true); // Disable CSS transition
         let lastTime = Date.now();
 
         const step = () => {
@@ -548,7 +904,6 @@ export class ImagesPreviewComponent {
                 lastTime = now;
 
                 if (dt === 0) {
-                    // Skip if 0ms passed (can happen on fast screens)
                     this.rafId = requestAnimationFrame(step);
                     return;
                 }
@@ -558,7 +913,6 @@ export class ImagesPreviewComponent {
                 this.velocityY = Math.max(-this.MAX_VELOCITY, Math.min(this.MAX_VELOCITY, this.velocityY));
 
                 // Time-based friction
-                // Standard friction is 0.95 per 16ms frame
                 const frictionFactor = Math.pow(this.FRICTION, dt / 16);
 
                 this.velocityX *= frictionFactor;
@@ -568,7 +922,6 @@ export class ImagesPreviewComponent {
                 let nextY = this.translateY() + this.velocityY * dt;
 
                 // Check bounds during inertia
-                // Hard stop/bounce logic can be improved here if needed
                 const constraints = this.cachedConstraints || this.getConstraints();
 
                 if (nextX > constraints.maxX) {
@@ -593,15 +946,13 @@ export class ImagesPreviewComponent {
                 this.rafId = requestAnimationFrame(step);
             } else {
                 this.stopInertia();
-                // Clear cache when movement stops
-                // The instruction says to clear it in onTouchEnd or reset/scale changes.
-                // So, no need to clear it here.
             }
         };
         this.rafId = requestAnimationFrame(step);
     }
 
     private stopInertia() {
+        this.isInertia.set(false); // Re-enable CSS transition
         if (this.rafId) {
             cancelAnimationFrame(this.rafId);
             this.rafId = null;
@@ -647,6 +998,26 @@ export class ImagesPreviewComponent {
     }
 
     onMouseUp() {
+        if (this.isDragging()) {
+            // Check Pull to Close for Mouse
+            if (this.scale() === 1) {
+                const y = this.translateY();
+                if (Math.abs(y) > 100) {
+                    this.close();
+                    return;
+                }
+                // Reset position if not closed
+                if (y !== 0) {
+                    this.translateY.set(0);
+                }
+                const x = this.translateX();
+                if (x !== 0) {
+                    this.translateX.set(0);
+                }
+            } else {
+                this.snapBack();
+            }
+        }
         this.isDragging.set(false);
     }
 
@@ -675,43 +1046,57 @@ export class ImagesPreviewComponent {
             }
 
             this.isDragging.set(false);
-            this.isPinching = false;
+            this.isPinching.set(false);
             this.initialPinchDistance = 0;
 
             // Swipe Navigation (at 1x scale)
             if (this.scale() === 1) {
                 const x = this.translateX();
-                const threshold = 50; // px
-                if (x < -threshold) {
-                    this.next();
-                    return;
-                } else if (x > threshold) {
-                    this.prev();
+                const y = this.translateY();
+
+                // Pull to Close
+                if (Math.abs(y) > 100) {
+                    this.close();
                     return;
                 }
-            }
 
-            // Check bounds
-            const constraints = this.cachedConstraints || this.getConstraints();
-            const x = this.translateX();
-            const y = this.translateY();
-            const outOfBounds =
-                x > constraints.maxX ||
-                x < -constraints.maxX ||
-                y > constraints.maxY ||
-                y < -constraints.maxY;
+                const threshold = window.innerWidth * 0.25;
+                const images = this.images();
+                const total = images ? images.length : 0;
+                const index = this.currentIndex();
 
-            if (outOfBounds) {
-                this.snapBack();
-                this.velocityX = 0;
-                this.velocityY = 0;
-                this.cachedConstraints = null;
+                if (x < -threshold) {
+                    // NEXT (Slide Left)
+                    if (index < total - 1) {
+                        this.animateSlide(-1);
+                    } else {
+                        this.translateX.set(0);
+                        this.translateY.set(0);
+                    }
+                    return;
+                } else if (x > threshold) {
+                    // PREV (Slide Right)
+                    if (index > 0) {
+                        this.animateSlide(1);
+                    } else {
+                        this.translateX.set(0);
+                        this.translateY.set(0);
+                    }
+                    return;
+                }
+
+                // Snap back
+                this.translateX.set(0);
+                this.translateY.set(0);
             } else {
                 this.startInertia();
             }
-        } else if (touches.length === 1 && this.isPinching) {
+            return;
+        }
+
+        else if (touches.length === 1 && this.isPinching()) {
             // Transition from pinch to pan
-            this.isPinching = false;
+            this.isPinching.set(false);
             this.isDragging.set(true);
             this.lastTouchX = touches[0].clientX;
             this.lastTouchY = touches[0].clientY;
@@ -726,6 +1111,9 @@ export class ImagesPreviewComponent {
 
     private lastTouchX = 0;
     private lastTouchY = 0;
+    private initialPinchCenter = { x: 0, y: 0 };
+    private initialTranslateX = 0;
+    private initialTranslateY = 0;
 
     private getDistance(touches: TouchList): number {
         return Math.hypot(
@@ -734,17 +1122,29 @@ export class ImagesPreviewComponent {
         );
     }
 
+    private getCenter(touches: TouchList) {
+        return {
+            x: (touches[0].clientX + touches[1].clientX) / 2,
+            y: (touches[0].clientY + touches[1].clientY) / 2,
+        };
+    }
+
     close() {
         this.closeCallback();
     }
 
-    onImageLoad() {
-        this.isLoading.set(false);
+    onImageLoad(src: string) {
+        this.loadedImages.update(set => {
+            const newSet = new Set(set);
+            newSet.add(src);
+            return newSet;
+        });
         this.hasError.set(false);
     }
 
-    onImageError() {
-        this.isLoading.set(false);
+    onImageError(src: string) {
+        // this.loadedImages.update... (maybe not mark as loaded? or separate error tracking)
+        // For now, keep error simple
         this.hasError.set(true);
     }
 
@@ -809,13 +1209,51 @@ export class ImagesPreviewComponent {
         }
     }
 
+    jumpTo(index: number) {
+        this.currentIndex.set(index);
+        this.reset();
+    }
+
+    // Slide Animation
+    private animateSlide(direction: -1 | 1) {
+        const spacing = 16;
+        const width = window.innerWidth + spacing;
+        // direction -1 (Next) -> move to -width
+        // direction 1 (Prev) -> move to width
+        // Wait. If I swipe Left (Next), x is negative. Target should be -width.
+        // If I swipe Right (Prev), x is positive. Target should be width.
+        // So target = direction * width? No.
+        // If direction is "Next" (index + 1), I want to slide to the Left (-X).
+        // Let's pass the sign of movement explicitly.
+
+        const target = direction === -1 ? -width : width;
+
+        this.translateX.set(target);
+
+        // Wait for CSS transition (0.3s)
+        setTimeout(() => {
+            // Update Index (silent swap)
+            this.isInertia.set(true); // Disable transition
+
+            if (direction === -1) this.next();
+            else this.prev();
+
+            this.translateX.set(0);
+
+            // Re-enable transition
+            setTimeout(() => {
+                this.isInertia.set(false);
+            }, 50);
+        }, 300);
+    }
+
     // Mouse Interaction
     onMouseDown(event: MouseEvent) {
-        if (this.scale() <= 1 && !this.isDragging()) return; // Can drag only if zoomed? Or always? Default: only zoomed?
-        // User expectation for preview: maybe panning always allowed? or only when zoomed?
-        // Best practice: if image fits, no pan. If zoomed, pan.
-        // I'll allow pan if scale > 1
-        if (this.scale() <= 1) return;
+        // Allow dragging even at scale 1 for Pull-to-Close and Swipe-like nav (if intended)
+        if (this.isDragging()) return;
+
+        // Only trigger on Left Click
+        if (event.button !== 0) return;
 
         this.isDragging.set(true);
         this.startX = event.clientX;
@@ -829,37 +1267,40 @@ export class ImagesPreviewComponent {
     onTouchStart(event: TouchEvent) {
         this.stopInertia(); // Cancel any ongoing movement
 
+        // if (event.cancelable) event.preventDefault(); // Removed to restore Tap-to-Close (click events)
+        // touch-action: none in CSS handles scroll prevention.
+
         const touches = event.touches;
 
         if (touches.length === 1) {
-            // Single touch: Pan. Only if touching the image directly.
-            // We need to check if the target is the image element.
-            const imgElement = this.imgRef()?.nativeElement;
-            if (imgElement && event.target === imgElement) {
-                this.isDragging.set(true);
-                this.lastTouchX = touches[0].clientX;
-                this.lastTouchY = touches[0].clientY;
-                this.lastTimestamp = Date.now(); // Keep for scroll decay reference if needed
+            // Single touch: Pan.
+            // Allow dragging from anywhere in the container (better UX for Pull-to-Close)
+            this.isDragging.set(true);
+            this.lastTouchX = touches[0].clientX;
+            this.lastTouchY = touches[0].clientY;
+            this.lastTimestamp = Date.now();
 
-                // Initialize physics state
-                this.velocityX = 0;
-                this.velocityY = 0;
-                this.touchHistory = [
-                    {
-                        x: touches[0].clientX,
-                        y: touches[0].clientY,
-                        time: Date.now(),
-                    },
-                ];
-                // Cache layout to prevent thrashing
-                this.cachedConstraints = this.getConstraints();
-            }
+            // Initialize physics state
+            this.velocityX = 0;
+            this.velocityY = 0;
+            this.touchHistory = [
+                {
+                    x: touches[0].clientX,
+                    y: touches[0].clientY,
+                    time: Date.now(),
+                },
+            ];
+            // Cache layout to prevent thrashing
+            this.cachedConstraints = this.getConstraints();
         } else if (touches.length === 2) {
             // Two fingers: Pinch
-            this.isPinching = true;
+            this.isPinching.set(true);
             this.isDragging.set(false); // Stop panning
             this.initialPinchDistance = this.getDistance(touches);
             this.initialScale = this.scale();
+            this.initialPinchCenter = this.getCenter(touches);
+            this.initialTranslateX = this.translateX();
+            this.initialTranslateY = this.translateY();
 
             // Clear caching on pinch (scale changes will invalidate limits)
             this.cachedConstraints = null;

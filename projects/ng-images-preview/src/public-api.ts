@@ -5,3 +5,4 @@
 
 export * from './lib/images-preview.component';
 export * from './lib/images-preview.directive';
+export * from './lib/images-preview.module';

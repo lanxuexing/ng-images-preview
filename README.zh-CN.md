@@ -28,12 +28,16 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 - 🎨 **原生 CSS**: 无第三方依赖，可通过 CSS 变量完全定制。
 - 🖼️ **多图画廊**: 支持箭头导航或滑动切换图片列表。
 - 📱 **移动端就绪**: 支持滑动切换、双击缩放、捏合缩放手势。
+- 👆 **下拉关闭**: 向下拖拽即可关闭预览 (类原生体验)。
+- 🎞️ **缩略图栏**: 支持自动滚动缩略图，快速预览与切换。
+- 🧩 **工具栏扩展**: 支持通过模板注入自定义按钮 (如下载)。
+- 🤝 **混合支持**: 完美兼容 Standalone 组件和传统的 NgModule 模式。
 - ⌨️ **键盘支持**: 方向键导航，ESC 关闭。
 - 🔍 **缩放与平移**: 流畅的缩放和平移交互。
 - 🔄 **旋转与翻转**: 内置图片操作工具栏。
-- 🧩 **自定义模板**: 通过 `ng-template` 完全掌控预览界面。
+- 🎨 **自定义模板**: 通过 `ng-template` 完全掌控预览界面。
 - ♿ **无障碍支持**: ARIA 标签及焦点管理。
-- ⚡ **高性能**: 智能预加载图片，画廊切换更流畅。
+- ⚡ **高性能**: 智能预加载与缓冲算法，画廊切换更流畅。
 - 🌏 **SSR 支持**: 完美兼容 Angular Universal/SSR 服务端渲染。
 - 🌗 **深色模式支持**: 无缝继承系统偏好或应用样式。
 
@@ -70,10 +74,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 export class AppModule { }
 ```
 
-### 1. 导入 Directive
+在你的独立组件 (standalone component) 或模块中注册该库。
 
-在你的独立组件 (standalone component) 或模块中注册 `ImagesPreviewDirective`。
-
+#### Standalone 模式 (推荐)
 ```typescript
 import { ImagesPreviewDirective } from 'ng-images-preview';
 
@@ -82,6 +85,16 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
   imports: [ImagesPreviewDirective, ...]
 })
 export class MyComponent {}
+```
+
+#### NgModule 模式 (传统支持)
+```typescript
+import { NgImagesPreviewModule } from 'ng-images-preview';
+
+@NgModule({
+  imports: [NgImagesPreviewModule, ...]
+})
+export class AppModule {}
 ```
 
 ### 2. 基本用法
@@ -174,6 +187,31 @@ export class MyComponent {}
 | `close()` | 关闭预览。 |
 | `next()` | 下一张 (画廊)。 |
 | `prev()` | 上一张 (画廊)。 |
+
+### CSS 变量 (主题定制)
+
+你可以通过在 `styles.css` 或组件样式中覆盖这些 CSS 变量来定制外观：
+
+```css
+:root {
+  /* 背景遮罩 */
+  --ng-img-background: rgba(0, 0, 0, 0.95);
+  
+  /* 文本和图标 */
+  --ng-img-text-color: rgba(255, 255, 255, 0.8);
+  
+  /* Z-Index */
+  --ng-img-z-index: 50;
+  
+  /* 工具栏 */
+  --ng-img-toolbar-bg: rgba(255, 255, 255, 0.1);
+  --ng-img-toolbar-hover: rgba(255, 255, 255, 0.2);
+  --ng-img-gap: 16px;
+  
+  /* 计数器 */
+  --ng-img-item-bg: rgba(0, 0, 0, 0.3);
+}
+```
 
 
 

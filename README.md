@@ -28,12 +28,16 @@ Check out the component in action: **[https://lanxuexing.github.io/ng-images-pre
 - 🎨 **Vanilla CSS**: Zero dependencies, fully customizable via CSS variables.
 - 🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
 - 📱 **Mobile Ready**: Swipe to navigate, double-tap to zoom, pinch-to-zoom gestures.
+- 👆 **Pull-to-Close**: Drag down to close the preview (like native apps).
+- 🎞️ **Thumbnail Strip**: Quick preview and navigation with an auto-scrolling strip.
+- 🧩 **Toolbar Extensions**: Inject custom buttons (like Download) into the toolbar.
+- 🤝 **Hybrid Support**: Fully compatible with both Standalone and NgModule-based apps.
 - ⌨️ **Keyboard Support**: Arrow keys to navigate, ESC to close.
 - 🔍 **Zoom & Pan**: Smooth zooming and panning interactions.
 - 🔄 **Rotate & Flip**: Built-in toolbar for image manipulation.
-- 🧩 **Custom Template**: Complete control over the preview UI via `ng-template`.
+- 🎨 **Custom Template**: Complete control over the preview UI via `ng-template`.
 - ♿ **Accessible**: ARIA labels and focus management.
-- ⚡ **Performance**: Smart image preloading for smoother gallery navigation.
+- ⚡ **Performance**: Smart image preloading and buffering for smoother navigation.
 - 🌏 **SSR Safe**: Fully compatible with Angular Universal/SSR.
 - 🌗 **Dark Mode Ready**: Inherits system preferences or app styles seamlessly.
 
@@ -70,10 +74,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 export class AppModule { }
 ```
 
-### 1. Import Directive
+Register the library in your standalone component or module.
 
-Register `ImagesPreviewDirective` in your standalone component or module.
-
+#### Standalone (Recommended)
 ```typescript
 import { ImagesPreviewDirective } from 'ng-images-preview';
 
@@ -82,6 +85,16 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
   imports: [ImagesPreviewDirective, ...]
 })
 export class MyComponent {}
+```
+
+#### NgModule (Legacy Support)
+```typescript
+import { NgImagesPreviewModule } from 'ng-images-preview';
+
+@NgModule({
+  imports: [NgImagesPreviewModule, ...]
+})
+export class AppModule {}
 ```
 
 ### 2. Basic Usage
@@ -174,6 +187,31 @@ When using `previewTemplate`, you get access to:
 | `close()` | Close the preview. |
 | `next()` | Go to next image (if gallery). |
 | `prev()` | Go to previous image (if gallery). |
+
+### CSS Variables (Theming)
+
+You can customize the look and feel by overriding these CSS variables in your `styles.css` or component styles:
+
+```css
+:root {
+  /* Overlay Background */
+  --ng-img-background: rgba(0, 0, 0, 0.95);
+  
+  /* Text & Icons */
+  --ng-img-text-color: rgba(255, 255, 255, 0.8);
+  
+  /* Z-Index */
+  --ng-img-z-index: 50;
+  
+  /* Toolbar */
+  --ng-img-toolbar-bg: rgba(255, 255, 255, 0.1);
+  --ng-img-toolbar-hover: rgba(255, 255, 255, 0.2);
+  --ng-img-gap: 16px;
+  
+  /* Counters */
+  --ng-img-item-bg: rgba(0, 0, 0, 0.3);
+}
+```
 
 
 

@@ -28,28 +28,31 @@ describe('ImagesPreviewComponent', () => {
     });
 
     it('should display loading initially', () => {
-        expect(component.isLoading()).toBe(true);
+        expect(component.state().isLoading).toBe(true);
         const loader = fixture.nativeElement.querySelector('.loader');
         expect(loader).toBeTruthy();
     });
 
     it('should update state on load', () => {
-        component.onImageLoad();
+        const testSrc = 'test.jpg';
+        component.onImageLoad(testSrc);
         fixture.detectChanges();
-        expect(component.isLoading()).toBe(false);
+        expect(component.state().isLoading).toBe(false);
         expect(component.hasError()).toBe(false);
     });
 
     it('should update state on error', () => {
-        component.onImageError();
+        const testSrc = 'test.jpg';
+        component.onImageError(testSrc);
         fixture.detectChanges();
-        expect(component.isLoading()).toBe(false);
+        expect(component.state().isLoading).toBe(false);
         expect(component.hasError()).toBe(true);
     });
 
     it('should zoom in', () => {
         const initialScale = component.scale();
         component.zoomIn();
+        fixture.detectChanges();
         expect(component.scale()).toBeGreaterThan(initialScale);
     });
 });

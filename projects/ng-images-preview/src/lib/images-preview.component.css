@@ -1,18 +1,34 @@
 :host {
     display: block;
+    --ng-img-background: rgba(0, 0, 0, 0.95);
+    --ng-img-text-color: rgba(255, 255, 255, 0.8);
+    --ng-img-z-index: 50;
+    --ng-img-toolbar-bg: rgba(255, 255, 255, 0.1);
+    --ng-img-toolbar-hover: rgba(255, 255, 255, 0.2);
+    --ng-img-gap: 16px;
+    --ng-img-item-bg: rgba(0, 0, 0, 0.3);
+
+    /* Thumbnail Variables */
+    --ng-img-thumb-strip-bg: rgba(0, 0, 0, 0.4);
+    --ng-img-thumb-width: 60px;
+    --ng-img-thumb-height: 40px;
+    --ng-img-thumb-gap: 8px;
+    --ng-img-thumb-border-radius: 6px;
+    --ng-img-thumb-active-border: white;
 }
 
 .overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: var(--ng-img-z-index);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.95);
+    background-color: var(--ng-img-background);
     overflow: hidden;
     user-select: none;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    touch-action: none;
 }
 
 .loader,
@@ -22,7 +38,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--ng-img-text-color);
     font-size: 16px;
 }
 
@@ -45,24 +61,27 @@
 }
 
 .preview-image {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     margin: auto;
     object-fit: contain;
     pointer-events: auto;
     will-change: transform;
     transform-origin: center center;
-    transition: transform 0.1s ease-out;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
     touch-action: none;
     /* Smooth drag/zoom */
 }
 
-.preview-image.dragging {
+.preview-image.dragging,
+.preview-image.inertia,
+.preview-image.pinching {
     cursor: move;
     transition: none;
-    /* No transition during drag for responsiveness */
+    /* No transition during drag, inertia or pinch for responsiveness */
 }
 
 .preview-image.zoom-in {
@@ -80,13 +99,13 @@
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 16px;
-    background-color: rgba(255, 255, 255, 0.1);
+    gap: var(--ng-img-gap);
+    background-color: var(--ng-img-toolbar-bg);
     backdrop-filter: blur(10px);
     padding: 10px 20px;
     border-radius: 24px;
     pointer-events: auto;
-    z-index: 60;
+    z-index: calc(var(--ng-img-z-index) + 10);
 }
 
 .toolbar-btn {
@@ -103,7 +122,7 @@
 }
 
 .toolbar-btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--ng-img-toolbar-hover);
 }
 
 .toolbar-btn:focus-visible {
@@ -111,7 +130,7 @@
     outline-offset: 2px;
 }
 
-.toolbar-btn svg {
+.toolbar-btn ::ng-deep svg {
     width: 24px;
     height: 24px;
     fill: currentColor;
@@ -121,7 +140,7 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    z-index: 60;
+    z-index: calc(var(--ng-img-z-index) + 10);
     background: none;
     border: none;
     color: white;
@@ -132,14 +151,14 @@
     backdrop-filter: blur(4px);
 }
 
-.close-btn svg {
+.close-btn ::ng-deep svg {
     width: 24px;
     height: 24px;
     fill: currentColor;
 }
 
 .close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--ng-img-toolbar-hover);
     transform: rotate(90deg);
 }
 
@@ -150,7 +169,7 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--ng-img-toolbar-bg);
     border: none;
     color: white;
     cursor: pointer;
@@ -162,7 +181,7 @@
 }
 
 .nav-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--ng-img-toolbar-hover);
 }
 
 .nav-btn.prev {
@@ -173,7 +192,7 @@
     right: 20px;
 }
 
-.nav-btn svg {
+.nav-btn ::ng-deep svg {
     width: 32px;
     height: 32px;
     fill: currentColor;
@@ -185,9 +204,9 @@
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--ng-img-text-color);
     font-size: 14px;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--ng-img-item-bg);
     padding: 4px 12px;
     border-radius: 12px;
     pointer-events: none;
@@ -196,4 +215,69 @@
 
 .hidden {
     display: none;
+}
+
+/* Thumbnails */
+.thumbnail-strip {
+    position: absolute;
+    bottom: 100px;
+    /* Above toolbar */
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 90%;
+    width: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px;
+    background: var(--ng-img-thumb-strip-bg);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Hide scrollbar Firefox */
+    z-index: 55;
+    font-size: 0;
+    /* Remove whitespace gaps */
+}
+
+.thumbnail-strip::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar Chrome/Safari */
+}
+
+.thumbnail-item {
+    display: inline-block;
+    vertical-align: middle;
+    width: var(--ng-img-thumb-width);
+    height: var(--ng-img-thumb-height);
+    margin-right: var(--ng-img-thumb-gap);
+    border-radius: var(--ng-img-thumb-border-radius);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+}
+
+.thumbnail-item:last-child {
+    margin-right: 0;
+}
+
+.thumbnail-item:hover {
+    opacity: 0.8;
+}
+
+.thumbnail-item.active {
+    opacity: 1;
+    border-color: var(--ng-img-thumb-active-border);
+    transform: scale(1.1);
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }

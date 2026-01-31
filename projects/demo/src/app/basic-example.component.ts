@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ImagesPreviewDirective } from 'ng-images-preview';
+import { ImagesPreviewDirective, ToolbarConfig } from 'ng-images-preview';
 
 @Component({
   selector: 'app-basic-example',
@@ -101,6 +101,160 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
               >
             </div>
           </div>
+
+         
+          <!-- Example 4: Custom Toolbar -->
+          <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            ngImagesPreview
+            [toolbarConfig]="minToolbarConfig"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-violet-500/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">Reduced Toolbar</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/42/800/600"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="Coffee"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >View (No Rotate)</span
+              >
+            </div>
+          </div>
+
+          <!-- Example 5: Responsive -->
+          <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            ngImagesPreview
+            [srcset]="srcsetString"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-pink-500/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">Srcset</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/55/800/600"
+              [srcset]="srcsetString"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="Responsive"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >Responsive View</span
+              >
+            </div>
+          </div>
+
+          
+          <!-- Example 6: Large Gallery (Thumbnails) -->
+          <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            [ngImagesPreview]="largeImageList[0]"
+            [previewImages]="largeImageList"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-orange-500/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">Thumbnails</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/60/800/600"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="Large Gallery"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >View Large Gallery</span
+              >
+            </div>
+            </div>
+
+          
+          <!-- Example 7: Thumbnails Disabled -->
+          <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            [ngImagesPreview]="largeImageList[0]"
+            [previewImages]="largeImageList"
+            [showThumbnails]="false"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-gray-500/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">No Thumbnails</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/80/800/600"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="No Thumbnails"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >View Gallery (No Thumbs)</span
+              >
+            </div>
+          </div>
+
+
+          
+
+
+          <!-- Example 8: Minimalist Mode -->
+          <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            [ngImagesPreview]="largeImageList[0]"
+            [previewImages]="largeImageList"
+            [showThumbnails]="false"
+            [showToolbar]="false"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-black/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">Minimalist</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/100/800/600"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="Minimalist"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >Pure View</span>
+            </div>
+          </div>
+
+          <!-- Example 9: Download Button Extension -->
+           <div
+            class="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-lg shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:scale-[1.02]"
+            [ngImagesPreview]="largeImageList[0]"
+            [previewImages]="largeImageList"
+            [toolbarExtensions]="downloadTpl"
+          >
+            <div class="absolute top-4 left-4 z-10">
+                <span class="px-2 py-1 bg-blue-500/80 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider rounded">Download Btn</span>
+            </div>
+            <img
+              src="https://picsum.photos/id/11/800/600"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              alt="Download"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6"
+            >
+              <span
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
+                >View & Download</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -133,10 +287,68 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
 <span class="text-slate-500">&lt;!-- 3. Zero Config (Auto Source) --&gt;</span>
 <span class="text-violet-400">&lt;img</span> 
   <span class="text-sky-300">src</span>=<span class="text-emerald-300">"image.jpg"</span> 
-  <span class="text-sky-300">ngImagesPreview</span><span class="text-violet-400">&gt;</span></code></pre>
+  <span class="text-sky-300">ngImagesPreview</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 4. Custom Toolbar --&gt;</span>
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"image.jpg"</span> 
+  <span class="text-sky-300">ngImagesPreview</span>
+  <span class="text-sky-300">[toolbarConfig]</span>=<span class="text-emerald-300">"{{ '{' }} showRotate: false {{ '}' }}"</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 5. Responsive (Srcset) --&gt;</span>
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"image.jpg"</span> 
+  <span class="text-sky-300">ngImagesPreview</span>
+  <span class="text-sky-300">[srcset]</span>=<span class="text-emerald-300">"'img-400w.jpg 400w, img-800w.jpg 800w'"</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 6. Thumbnails (Auto-appears for >1 images) --&gt;</span>
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"thumb.jpg"</span> 
+  <span class="text-sky-300">[ngImagesPreview]</span>=<span class="text-emerald-300">"full.jpg"</span>
+  <span class="text-sky-300">[previewImages]</span>=<span class="text-emerald-300">"largeList"</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 7. Thumbnails Disabled --&gt;</span>
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"thumb.jpg"</span> 
+  <span class="text-sky-300">[ngImagesPreview]</span>=<span class="text-emerald-300">"full.jpg"</span>
+  <span class="text-sky-300">[previewImages]</span>=<span class="text-emerald-300">"largeList"</span>
+  <span class="text-sky-300">[showThumbnails]</span>=<span class="text-emerald-300">"false"</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 8. Minimalist (No GUI) --&gt;</span>
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"img.jpg"</span> 
+  <span class="text-sky-300">[ngImagesPreview]</span>=<span class="text-emerald-300">"full.jpg"</span>
+  <span class="text-sky-300">[showThumbnails]</span>=<span class="text-emerald-300">"false"</span>
+  <span class="text-sky-300">[showToolbar]</span>=<span class="text-emerald-300">"false"</span><span class="text-violet-400">&gt;</span>
+
+<span class="text-slate-500">&lt;!-- 9. Custom Extension (Download) --&gt;</span>
+<span class="text-violet-400">&lt;ng-template</span> <span class="text-sky-300">#dlBtn</span> <span class="text-sky-300">let-img</span><span class="text-violet-400">&gt;</span>
+  <span class="text-violet-400">&lt;button</span> <span class="text-sky-300">(click)</span>=<span class="text-emerald-300">"download(img)"</span><span class="text-violet-400">&gt;</span>Download<span class="text-violet-400">&lt;/button&gt;</span>
+<span class="text-violet-400">&lt;/ng-template&gt;</span>
+
+<span class="text-violet-400">&lt;img</span> 
+  <span class="text-sky-300">src</span>=<span class="text-emerald-300">"img.jpg"</span> 
+  <span class="text-sky-300">ngImagesPreview</span>
+  <span class="text-sky-300">[toolbarExtensions]</span>=<span class="text-emerald-300">"dlBtn"</span><span class="text-violet-400">&gt;</span></code></pre>
+
+
       </section>
+
+      <!-- Custom Templates -->
+      <ng-template #downloadTpl let-img>
+        <button 
+          class="p-2 rounded-full hover:bg-white/20 text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer"
+          (click)="downloadImage(img); $event.stopPropagation()"
+          title="Download Image"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+        </button>
+      </ng-template>
     </div>
   `,
+
 })
 export class BasicExampleComponent {
   imageList = [
@@ -146,4 +358,28 @@ export class BasicExampleComponent {
     'https://picsum.photos/id/25/5000/3333',
     'https://picsum.photos/id/28/4928/3264',
   ];
+
+  largeImageList = Array.from({ length: 12 }, (_, i) => `https://picsum.photos/id/${60 + i}/1200/800`);
+
+  minToolbarConfig: ToolbarConfig = {
+    showRotate: false,
+    showFlip: false,
+    showZoom: true
+  };
+
+  srcsetString = `https://picsum.photos/id/55/400/300 400w, 
+                  https://picsum.photos/id/55/800/600 800w, 
+                  https://picsum.photos/id/55/1600/1200 1600w`;
+
+  downloadImage(url: string) {
+    // Fake download for demo
+    alert(`Downloading image: ${url}`);
+    /*
+    // Real implementation:
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'download.jpg';
+    a.click();
+    */
+  }
 }
