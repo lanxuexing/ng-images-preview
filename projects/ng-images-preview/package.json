@@ -8,7 +8,7 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "description": "A lightweight, mobile-ready Angular 18+ image preview library with zoom, rotate, flip, and custom template support. Built with Signals and Vanilla CSS.",
+  "description": "🚀 High-performance Angular 18+ Image Preview & Gallery. Features native-like mobile gestures (Pinch-to-Zoom, Pull-to-Close), auto-thumbnails & smart preloading. Built with Signals & Zero-Dep Vanilla CSS.",
   "keywords": [
     "angular",
     "image-preview",
