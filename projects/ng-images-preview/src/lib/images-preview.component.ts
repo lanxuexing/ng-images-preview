@@ -26,6 +26,8 @@ export interface ImagesPreviewState {
     flipV: boolean;
     isLoading: boolean;
     hasError: boolean;
+    currentIndex: number;
+    total: number;
 }
 
 export interface ImagesPreviewActions {
@@ -37,6 +39,9 @@ export interface ImagesPreviewActions {
     flipVertical: () => void;
     reset: () => void;
     close: () => void;
+    next: () => void;
+    prev: () => void;
+    jumpTo: (index: number) => void;
 }
 
 /**
@@ -486,6 +491,8 @@ export class ImagesPreviewComponent {
         flipV: this.flipV(),
         isLoading: !this.loadedImages().has(this.src() || '') && !this.hasError(),
         hasError: this.hasError(),
+        currentIndex: this.currentIndex(),
+        total: this.images()?.length ?? 1,
     }));
 
     // Actions object for template
@@ -498,6 +505,9 @@ export class ImagesPreviewComponent {
         flipVertical: () => this.flipVertical(),
         reset: () => this.reset(),
         close: () => this.close(),
+        next: () => this.next(),
+        prev: () => this.prev(),
+        jumpTo: (index: number) => this.jumpTo(index),
     };
 
     private readonly MIN_SCALE = 0.5;

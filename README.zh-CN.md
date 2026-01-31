@@ -114,12 +114,33 @@ export class AppModule {}
 ```
 
 **选项 C: 画廊模式**
-传入图片列表到 `previewImages` 以启用画廊导航 (箭头、滑动)。
+传入图片列表到 `previewImages` 以启用画廊导航及自动 **缩略图栏**。
 ```html
 <img 
   src="item1.jpg" 
   [ngImagesPreview]="'item1-highres.jpg'"
-  [previewImages]="['item1-highres.jpg', 'item2-highres.jpg', 'item3-highres.jpg']">
+  [previewImages]="['item1.jpg', 'item2.jpg', 'item3.jpg']">
+```
+
+**选项 D: 工具栏扩展**
+使用 `ng-template` 添加自定义按钮 (比如下载按钮)。
+```html
+<ng-template #myExtraButtons>
+  <button class="toolbar-btn" (click)="download()">
+    <svg>...</svg>
+  </button>
+</ng-template>
+
+<img src="pic.jpg" ngImagesPreview [toolbarExtensions]="myExtraButtons">
+```
+
+**选项 E: 响应式性能 (Srcsets)**
+支持响应式图片，在移动端加载更快的资源。
+```html
+<img 
+  src="thumb.jpg" 
+  ngImagesPreview 
+  [previewSrcsets]="['image-400w.jpg 400w, image-800w.jpg 800w']">
 ```
 
 ### 3. 自定义模板
@@ -181,6 +202,8 @@ export class AppModule {}
 | `flipV` | `boolean` | 垂直翻转状态。 |
 | `isLoading` | `boolean` | 图片是否正在加载。 |
 | `hasError` | `boolean` | 图片是否加载失败。 |
+| `currentIndex` | `number` | 当前图片在画廊中的索引 (从 0 开始)。 |
+| `total` | `number` | 画廊中的图片总数。 |
 
 #### `actions` (操作)
 | 方法 | 描述 |
@@ -195,6 +218,7 @@ export class AppModule {}
 | `close()` | 关闭预览。 |
 | `next()` | 下一张 (画廊)。 |
 | `prev()` | 上一张 (画廊)。 |
+| `jumpTo(index)` | 跳转到指定索引 (画廊)。 |
 
 ### CSS 变量 (主题定制)
 
@@ -202,13 +226,9 @@ export class AppModule {}
 
 ```css
 :root {
-  /* 背景遮罩 */
+  /* 背景与遮罩 */
   --ng-img-background: rgba(0, 0, 0, 0.95);
-  
-  /* 文本和图标 */
   --ng-img-text-color: rgba(255, 255, 255, 0.8);
-  
-  /* Z-Index */
   --ng-img-z-index: 50;
   
   /* 工具栏 */
@@ -216,7 +236,15 @@ export class AppModule {}
   --ng-img-toolbar-hover: rgba(255, 255, 255, 0.2);
   --ng-img-gap: 16px;
   
-  /* 计数器 */
+  /* 缩略图 */
+  --ng-img-thumb-strip-bg: rgba(0, 0, 0, 0.4);
+  --ng-img-thumb-width: 60px;
+  --ng-img-thumb-height: 40px;
+  --ng-img-thumb-gap: 8px;
+  --ng-img-thumb-border-radius: 6px;
+  --ng-img-thumb-active-border: white;
+  
+  /* 其他 */
   --ng-img-item-bg: rgba(0, 0, 0, 0.3);
 }
 ```

@@ -114,12 +114,33 @@ export class AppModule {}
 ```
 
 **Option C: Gallery Mode**
-Pass a list of images to `previewImages` to enable gallery navigation (arrows, swipe).
+Pass a list of images to `previewImages` to enable gallery navigation and the automatic **Thumbnail Strip**.
 ```html
 <img 
   src="item1.jpg" 
   [ngImagesPreview]="'item1-highres.jpg'"
-  [previewImages]="['item1-highres.jpg', 'item2-highres.jpg', 'item3-highres.jpg']">
+  [previewImages]="['item1.jpg', 'item2.jpg', 'item3.jpg']">
+```
+
+**Option D: Toolbar Extensions**
+Add custom buttons (like Download) using an `ng-template`.
+```html
+<ng-template #myExtraButtons>
+  <button class="toolbar-btn" (click)="download()">
+    <svg>...</svg>
+  </button>
+</ng-template>
+
+<img src="pic.jpg" ngImagesPreview [toolbarExtensions]="myExtraButtons">
+```
+
+**Option E: Performance (Srcsets)**
+Support responsive images for faster loading on mobile.
+```html
+<img 
+  src="thumb.jpg" 
+  ngImagesPreview 
+  [previewSrcsets]="['image-400w.jpg 400w, image-800w.jpg 800w']">
 ```
 
 ### 3. Custom Template
@@ -181,6 +202,8 @@ When using `previewTemplate`, you get access to:
 | `flipV` | `boolean` | Vertical flip state. |
 | `isLoading` | `boolean` | True if image is loading. |
 | `hasError` | `boolean` | True if image failed to load. |
+| `currentIndex` | `number` | Current index in gallery (0-based). |
+| `total` | `number` | Total number of images in gallery. |
 
 #### `actions`
 | Method | Description |
@@ -195,6 +218,7 @@ When using `previewTemplate`, you get access to:
 | `close()` | Close the preview. |
 | `next()` | Go to next image (if gallery). |
 | `prev()` | Go to previous image (if gallery). |
+| `jumpTo(index)` | Jump to a specific index in gallery. |
 
 ### CSS Variables (Theming)
 
@@ -202,13 +226,9 @@ You can customize the look and feel by overriding these CSS variables in your `s
 
 ```css
 :root {
-  /* Overlay Background */
+  /* Overlay */
   --ng-img-background: rgba(0, 0, 0, 0.95);
-  
-  /* Text & Icons */
   --ng-img-text-color: rgba(255, 255, 255, 0.8);
-  
-  /* Z-Index */
   --ng-img-z-index: 50;
   
   /* Toolbar */
@@ -216,7 +236,15 @@ You can customize the look and feel by overriding these CSS variables in your `s
   --ng-img-toolbar-hover: rgba(255, 255, 255, 0.2);
   --ng-img-gap: 16px;
   
-  /* Counters */
+  /* Thumbnails */
+  --ng-img-thumb-strip-bg: rgba(0, 0, 0, 0.4);
+  --ng-img-thumb-width: 60px;
+  --ng-img-thumb-height: 40px;
+  --ng-img-thumb-gap: 8px;
+  --ng-img-thumb-border-radius: 6px;
+  --ng-img-thumb-active-border: white;
+  
+  /* Misc */
   --ng-img-item-bg: rgba(0, 0, 0, 0.3);
 }
 ```
