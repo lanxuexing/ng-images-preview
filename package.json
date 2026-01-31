@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "build:lib": "cp README* projects/ng-images-preview/ && ng build ng-images-preview --configuration production && rm projects/ng-images-preview/README*",
     "build:demo": "ng build demo --configuration production",
-    "build:demo:gh": "ng build demo --configuration production --base-href /ng-images-preview/ && cp projects/demo/public/404.html dist/demo/browser/404.html",
+    "build:demo:gh": "ng build demo --configuration production --base-href /ng-images-preview/",
     "release": "npm run build:lib && cd dist/ng-images-preview && npm publish",
     "clean": "rm -rf dist .angular"
   },
