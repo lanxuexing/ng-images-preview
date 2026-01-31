@@ -40,7 +40,12 @@
     "touch-support",
     "signals",
     "standalone",
-    "vanilla-css"
+    "vanilla-css",
+    "thumbnails",
+    "preloading",
+    "swipe",
+    "pinch-to-zoom",
+    "pull-to-close"
   ],
   "author": "lanxuexing <lanxuexing313wsr@163.com>",
   "license": "MIT",
