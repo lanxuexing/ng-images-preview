@@ -1,8 +1,8 @@
 <div
-  class="flex h-screen bg-gradient-to-br from-slate-50 to-gray-200 text-slate-800 font-sans selection:bg-indigo-500/20">
+  class="flex h-screen bg-gradient-to-br from-slate-50 to-gray-200 dark:from-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-200 font-sans selection:bg-indigo-500/20">
   <!-- Sidebar (Desktop) -->
   <aside
-    class="w-72 bg-white/70 backdrop-blur-xl flex-col shadow-[0_0_40px_-10px_rgba(0,0,0,0.05)] border-r border-white/50 fixed h-full z-20 transition-all duration-300 hidden md:flex">
+    class="w-72 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl flex-col shadow-[0_0_40px_-10px_rgba(0,0,0,0.05)] border-r border-white/50 dark:border-slate-800/50 fixed h-full z-20 transition-all duration-300 hidden md:flex">
     <div class="p-8">
       <h1
         class="text-2xl font-extrabold bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-500 bg-clip-text text-transparent tracking-tight drop-shadow-sm">
@@ -16,20 +16,52 @@
     <nav class="flex-1 px-4 space-y-2 overflow-y-auto mt-4">
       <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Showcase</p>
 
-      <a routerLink="/basic" routerLinkActive="bg-white/80 shadow-sm text-indigo-600 translate-x-1"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 hover:bg-white/50 hover:text-indigo-600 group hover:translate-x-1">
-        <span class="w-2 h-2 rounded-full bg-slate-300 mr-3 group-hover:bg-indigo-400 transition-colors"
+      <a routerLink="/basic"
+        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
+        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
+        <span
+          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
           routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
         Basic Usage
       </a>
 
-      <a routerLink="/custom" routerLinkActive="bg-white/80 shadow-sm text-indigo-600 translate-x-1"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 hover:bg-white/50 hover:text-indigo-600 group hover:translate-x-1">
-        <span class="w-2 h-2 rounded-full bg-slate-300 mr-3 group-hover:bg-indigo-400 transition-colors"
+      <a routerLink="/custom"
+        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
+        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
+        <span
+          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
           routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
         Custom Template
       </a>
     </nav>
+
+    <!-- Theme Toggle (Desktop) -->
+    <div class="px-8 py-4 border-t border-slate-100 dark:border-slate-800">
+      <button (click)="toggleTheme()"
+        class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 group">
+        <span class="flex items-center">
+          @if (mode() === 'system') {
+          <svg class="w-5 h-5 mr-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Follow System
+          } @else if (mode() === 'light') {
+          <svg class="w-5 h-5 mr-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Light Mode
+          } @else {
+          <svg class="w-5 h-5 mr-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          Dark Mode
+          }
+        </span>
+      </button>
+    </div>
 
     <div class="p-6">
       <a href="https://github.com/lanxuexing/ng-images-preview" target="_blank"
@@ -46,15 +78,37 @@
 
   <!-- Bottom Nav (Mobile) -->
   <nav
-    class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-xl border-t border-slate-200 z-30 flex items-center justify-around px-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
-    <a routerLink="/basic" routerLinkActive="text-indigo-600 font-bold bg-indigo-50/50"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600 transition-colors rounded-lg">
+    class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
+    <a routerLink="/basic"
+      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
+      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
       <span class="text-xs mt-1">Basic</span>
     </a>
-    <a routerLink="/custom" routerLinkActive="text-indigo-600 font-bold bg-indigo-50/50"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600 transition-colors rounded-lg">
+    <a routerLink="/custom"
+      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
+      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
       <span class="text-xs mt-1">Custom</span>
     </a>
+    <button (click)="toggleTheme()"
+      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+      @if (mode() === 'system') {
+      <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+      } @else if (mode() === 'light') {
+      <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      } @else {
+      <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+      }
+      <span class="text-[10px] mt-1 uppercase font-bold tracking-tighter">{{ mode() }}</span>
+    </button>
     <a href="https://github.com/lanxuexing/ng-images-preview" target="_blank"
       class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600 transition-colors">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

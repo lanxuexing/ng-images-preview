@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Force dark mode to use the .dark class instead of system preference only */
+@variant dark (&:where(.dark, .dark *));
+
+/* Ensure browser UI and scrollbars react to the theme */
+:root {
+    color-scheme: light;
+}
+
+.dark {
+    color-scheme: dark;
+}
+
 /* Syntax highlighting for code blocks */
 pre {
     background: #1e1e1e;

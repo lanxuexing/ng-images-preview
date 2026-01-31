@@ -10,33 +10,33 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
   template: `
     <div class="space-y-6 animate-in fade-in duration-500">
       <header class="mb-10">
-        <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Custom Template</h2>
-        <p class="text-base md:text-lg text-slate-500 max-w-2xl leading-relaxed">
+        <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Custom Template</h2>
+        <p class="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
           Take full control of the preview UI by providing a
           <code
-            class="bg-indigo-50 border border-indigo-100 rounded px-1.5 py-0.5 text-indigo-600 text-sm font-mono font-medium"
+            class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded px-1.5 py-0.5 text-indigo-600 dark:text-indigo-400 text-sm font-mono font-medium"
             >ng-template</code
           >.
         </p>
       </header>
 
       <section
-        class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-5 md:p-12 mb-12"
+        class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-12 mb-12"
       >
         <div class="flex items-center justify-between mb-8">
           <div>
-            <h3 class="text-xl font-bold text-slate-900">Custom UI Integration</h3>
-            <p class="text-sm text-slate-500 mt-1">Preview with completely custom controls and layout</p>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Custom UI Integration</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Preview with completely custom controls and layout</p>
           </div>
           <span
-            class="px-3 py-1 bg-violet-50 text-violet-600 rounded-full text-xs font-bold uppercase tracking-wider"
+            class="px-3 py-1 bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 rounded-full text-xs font-bold uppercase tracking-wider"
             >Advanced</span
           >
         </div>
 
         <div class="flex justify-center">
           <div
-            class="group relative max-w-sm rounded-2xl overflow-hidden cursor-pointer shadow-2xl shadow-slate-200 hover:shadow-3xl hover:shadow-indigo-500/10 transition-all duration-500 bg-white"
+            class="group relative max-w-sm rounded-2xl overflow-hidden cursor-pointer shadow-2xl shadow-slate-200 dark:shadow-none hover:shadow-3xl hover:shadow-indigo-500/10 transition-all duration-500 bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700"
             ngImagesPreview="https://picsum.photos/id/25/5000/3333"
             [previewTemplate]="myCustomPreview"
           >
@@ -58,12 +58,12 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
 
             <div class="p-8">
               <h5
-                class="mb-3 text-2xl font-bold tracking-tight text-slate-900"
+                class="mb-3 text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
               >
                 Custom Interaction
               </h5>
-              <p class="font-normal text-slate-500 leading-relaxed">
-                Click the image above to experience a bespoke preview interface implemented via the <span class="text-indigo-600 font-medium">Template API</span>.
+              <p class="font-normal text-slate-500 dark:text-slate-400 leading-relaxed">
+                Click the image above to experience a bespoke preview interface implemented via the <span class="text-indigo-600 dark:text-indigo-400 font-medium">Template API</span>.
               </p>
             </div>
           </div>
@@ -72,14 +72,14 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
 
       <!-- Custom Template Definition -->
       <ng-template #myCustomPreview let-state let-actions="actions">
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-md">
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300">
             
             <!-- Custom Header -->
             <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10" (click)="$event.stopPropagation()">
-                <div class="bg-gray-100 px-3 py-1 rounded-full text-xs font-mono text-gray-600">
+                <div class="bg-gray-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-mono text-gray-600 dark:text-slate-400 transition-colors">
                     Zoom: {{ (state.scale * 100).toFixed(0) }}% | Rotation: {{ state.rotate }}°
                 </div>
-                <button (click)="actions.close()" class="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-full transition-colors">
+                <button (click)="actions.close()" class="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800/50 p-2 rounded-full transition-all">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -106,7 +106,7 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
         </div>
       </ng-template>
 
-      <section class="bg-slate-900 rounded-3xl p-5 md:p-8 shadow-2xl relative overflow-hidden group">
+      <section class="bg-slate-900 dark:bg-black rounded-3xl p-5 md:p-8 shadow-2xl relative overflow-hidden group border border-white/5 dark:border-slate-800">
         <div
           class="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity"
         >
