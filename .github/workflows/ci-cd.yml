@@ -6,8 +6,6 @@ on:
     tags:
       - 'v*'
       - '*' # Catch-all for other tag formats like '2.0.0'
-  release:
-    types: [published] # Specifically trigger on GitHub Release UI actions
 
 jobs:
   build-and-deploy-demo:
