@@ -70,19 +70,21 @@
     margin: auto;
     object-fit: contain;
     pointer-events: auto;
-    will-change: transform;
+    will-change: transform, opacity;
     transform-origin: center center;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
     touch-action: none;
     /* Smooth drag/zoom */
 }
 
 .preview-image.dragging,
 .preview-image.inertia,
+.preview-image.flipping,
 .preview-image.pinching {
     cursor: move;
-    transition: none;
-    /* No transition during drag, inertia or pinch for responsiveness */
+    transition: none !important;
+    opacity: 1 !important;
+    /* No transition during drag, inertia, flip or pinch for responsiveness */
 }
 
 .preview-image.zoom-in {

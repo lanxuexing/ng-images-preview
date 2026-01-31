@@ -125,6 +125,7 @@ interface ImageBufferItem {
               class="preview-image"
               [class.dragging]="isDragging()"
               [class.inertia]="isInertia()"
+              [class.flipping]="flipTransform() !== ''"
               [class.pinching]="isPinching()"
               [class.zoom-in]="scale() === 1"
               [class.zoom-out]="scale() > 1"
@@ -144,8 +145,8 @@ interface ImageBufferItem {
         <button class="close-btn" (click)="close()" aria-label="Close preview" [innerHTML]="icons.close">
         </button>
 
-        <!-- Navigation -->
-        @if (images() && images()!.length > 1) {
+        <!-- Navigation Arrows -->
+        @if (showNavigation() && images() && images()!.length > 1) {
           <!-- Check if not first -->
           @if (currentIndex() > 0) {
             <button
@@ -168,8 +169,10 @@ interface ImageBufferItem {
             >
             </button>
           }
+        }
 
-          <!-- Counter -->
+        <!-- Counter -->
+        @if (showCounter() && images() && images()!.length > 1) {
           <div class="counter">{{ currentIndex() + 1 }} / {{ images()!.length }}</div>
         }
 
@@ -236,7 +239,9 @@ interface ImageBufferItem {
                 style({ opacity: 0 }),
                 animate('200ms ease-out', style({ opacity: 1 })),
             ]),
-            transition(':leave', [animate('200ms ease-in', style({ opacity: 0 }))]),
+            transition(':leave', [
+                animate('300ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0 })),
+            ]),
         ]),
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -250,6 +255,7 @@ interface ImageBufferItem {
     },
 })
 export class ImagesPreviewComponent {
+    private isClosing = signal(false);
     /**
      * The image source to display.
      * @required
@@ -317,6 +323,18 @@ export class ImagesPreviewComponent {
 
     // Track loaded state for each image source
     loadedImages = signal<Set<string>>(new Set());
+
+    /**
+     * Whether to show next/prev navigation arrows.
+     * @default true
+     */
+    showNavigation = input(true);
+
+    /**
+     * Whether to show the image counter (e.g. "1 / 5").
+     * @default true
+     */
+    showCounter = input(true);
 
     // Toggle thumbnails
     showThumbnails = input(true);
@@ -530,25 +548,47 @@ export class ImagesPreviewComponent {
     private readonly VELOCITY_THRESHOLD = 0.01;
     private readonly MAX_VELOCITY = 3; // Cap speed to prevent teleporting
 
+    /**
+     * Gesture Locking: 'horizontal' (Swipe) or 'vertical' (Pull-to-Close)
+     */
+    private lockDirection = signal<'horizontal' | 'vertical' | null>(null);
+
     // Updated transform logic for slide buffer
     getTransform(offset: number) {
         const viewportWidth = window.innerWidth;
         const spacing = 16; // Gap between images
         const baseOffset = offset * (viewportWidth + spacing);
 
-        // Dynamic movement from touch/inertia
         // Global translateX applies to the whole "track"
         const x = this.translateX() + baseOffset;
 
-        // Y-axis drag (Pull-to-Close) usually only affects the active image visually,
-        // but moving the whole track is acceptable and simpler.
-        // Ideally, neighbors stay at Y=0.
-        const effectiveY = offset === 0 ? this.translateY() : 0;
-
-        const effectiveScale = offset === 0 ? this.scale() : 1;
-        const effectiveRotate = offset === 0 ? this.rotate() : 0;
+        // --- Physics State ---
+        const y = this.translateY();
+        const scale = this.scale();
+        const rotate = this.rotate();
         const flipH = offset === 0 ? this.flipH() : false;
         const flipV = offset === 0 ? this.flipV() : false;
+
+        let effectiveY = offset === 0 ? y : 0;
+        let effectiveScale = offset === 0 ? scale : 1;
+        let effectiveRotate = offset === 0 ? rotate : 0;
+
+        // --- Premium: Interactive Shrink & Elastic Drag Feel ---
+        if (offset === 0 && scale === 1 && (Math.abs(y) > 0 || this.isClosing())) {
+            // 1. Liquid Shrink: more aggressive divisor of 350
+            const distance = this.isClosing() ? 350 : Math.abs(y);
+            const shrinkFactor = Math.max(this.isClosing() ? 0 : 0.65, 1 - distance / 350);
+            effectiveScale *= shrinkFactor;
+
+            // 2. Elastic Drag: the "hand feel" damping
+            // We want the image to resist more as it's pulled further
+            if (!this.isClosing()) {
+                const absY = Math.abs(y);
+                const sign = y > 0 ? 1 : -1;
+                // High-fidelity formula for "liquid" stretch feel
+                effectiveY = sign * (Math.pow(absY, 0.82) * 2.2);
+            }
+        }
 
         const scaleX = flipH ? -1 : 1;
         const scaleY = flipV ? -1 : 1;
@@ -559,11 +599,16 @@ export class ImagesPreviewComponent {
             if (flip) return flip;
         }
 
+        // --- Visual Isolation: Hide neighbors during Vertical Pull OR Closing ---
+        if ((this.lockDirection() === 'vertical' || this.isClosing()) && offset !== 0) {
+            return `translate3d(${x}px, ${effectiveY}px, 0) scale(0)`;
+        }
+
         return `translate3d(${x}px, ${effectiveY}px, 0) scale(${effectiveScale}) rotate(${effectiveRotate}deg) scaleX(${scaleX}) scaleY(${scaleY})`;
     }
 
     // FLIP State
-    private flipTransform = signal('');
+    protected flipTransform = signal('');
 
     // Helper to get current active image element
     private getCurrentImageElement(): HTMLImageElement | undefined {
@@ -606,8 +651,8 @@ export class ImagesPreviewComponent {
 
         // 3. Play
         requestAnimationFrame(() => {
-            // Enable transition
-            imgEl.style.transition = 'transform 300ms cubic-bezier(0.2, 0, 0.2, 1)';
+            // Enable transition: Fluid Apple-style curve
+            imgEl.style.transition = 'transform 450ms cubic-bezier(0.2, 0.9, 0.42, 1)';
             // Remove override (animates to Final)
             this.flipTransform.set('');
             this.flipAnimDone = true;
@@ -615,7 +660,7 @@ export class ImagesPreviewComponent {
             // CLEANUP: Remove transition after animation wraps up so dragging/panning is instant
             setTimeout(() => {
                 imgEl.style.transition = '';
-            }, 300);
+            }, 450);
         });
     }
 
@@ -623,7 +668,8 @@ export class ImagesPreviewComponent {
         const y = Math.abs(this.translateY());
         const scale = this.scale();
         if (scale === 1 && y > 0) {
-            const opacity = Math.max(0, 0.95 - y / 400); // Fade out as we drag down
+            // More aggressive fade to match 500 divisor
+            const opacity = Math.max(0, 0.95 - y / 350);
             return `rgba(0, 0, 0, ${opacity})`;
         }
         return 'var(--ng-img-background)';
@@ -642,8 +688,28 @@ export class ImagesPreviewComponent {
         const deltaX = event.clientX - this.startX;
         const deltaY = event.clientY - this.startY;
 
-        let nextX = this.lastTranslateX + deltaX;
-        let nextY = this.lastTranslateY + deltaY;
+        // Track history for velocity
+        this.touchHistory.push({
+            x: event.clientX,
+            y: event.clientY,
+            time: Date.now(),
+        });
+        if (this.touchHistory.length > 20) this.touchHistory.shift();
+
+        const scale = this.scale();
+        if (scale === 1) {
+            // Direction Locking for Mouse
+            if (this.lockDirection() === null) {
+                const diffX = Math.abs(deltaX);
+                const diffY = Math.abs(deltaY);
+                if (diffX > 10 || diffY > 10) {
+                    this.lockDirection.set(diffY > diffX * 1.2 ? 'vertical' : 'horizontal');
+                }
+            }
+        }
+
+        const nextX = this.lastTranslateX + deltaX;
+        const nextY = this.lastTranslateY + deltaY;
 
         // Apply strict clamping during move
         this.applyMoveConstraints(nextX, nextY);
@@ -667,8 +733,21 @@ export class ImagesPreviewComponent {
 
         // If scale is 1, we allow free movement for Pull-to-Close and Swipe Nav
         if (scale === 1) {
-            this.translateX.set(nextX);
-            this.translateY.set(nextY);
+            let finalX = nextX;
+            let finalY = nextY;
+
+            if (this.lockDirection() === 'vertical') {
+                finalX = 0;
+            } else if (this.lockDirection() === 'horizontal') {
+                finalY = 0;
+            } else {
+                // If not locked yet, keep them at 0 to avoid jitter/peeping
+                finalX = 0;
+                finalY = 0;
+            }
+
+            this.translateX.set(finalX);
+            this.translateY.set(finalY);
             return;
         }
 
@@ -738,18 +817,34 @@ export class ImagesPreviewComponent {
             // Use cached constraints to avoid reflows
             const constraints = this.cachedConstraints || this.getConstraints();
 
-            // At scale 1, we want linear drag for pull-to-close (Y) and swipe (X)
-            // But we can keep rubber banding if it feels good.
-            // For Pull-to-Close, standard is 1:1 or slightly resisted. 
-            // Let's stick to the current logic which applies resistance if "out of bounds".
-            // Since at scale 1 bounds are 0, it will apply resistance immediately.
-            // We want easier pull.
-
             if (this.scale() === 1) {
-                // Reduce resistance
-                nextY = currentY + deltaY;
-                nextX = currentX + deltaX;
+                // --- Direction Locking & Isolation ---
+                if (this.lockDirection() === null) {
+                    const startTouch = this.touchHistory[0];
+                    if (startTouch) {
+                        const diffX = Math.abs(touches[0].clientX - startTouch.x);
+                        const diffY = Math.abs(touches[0].clientY - startTouch.y);
+                        if (diffX > 10 || diffY > 10) {
+                            this.lockDirection.set(diffY > diffX * 1.2 ? 'vertical' : 'horizontal');
+                        }
+                    }
+                }
+
+                if (this.lockDirection() === 'vertical') {
+                    // Pull to Close: Lock X to 0 to prevent neighbor "peeping"
+                    nextX = 0;
+                } else if (this.lockDirection() === 'horizontal') {
+                    // Swipe Nav: Lock Y to 0 for stable sliding
+                    nextY = 0;
+                }
+                // If null (threshold not met), allow free movement? 
+                // No, better to keep them 0 until intent is clear
+                if (this.lockDirection() === null) {
+                    nextX = 0;
+                    nextY = 0;
+                }
             } else {
+                // Rubber banding for zoomed pan
                 if (nextX > constraints.maxX) {
                     nextX = constraints.maxX + (nextX - constraints.maxX) * 0.5;
                 } else if (nextX < -constraints.maxX) {
@@ -761,12 +856,6 @@ export class ImagesPreviewComponent {
                 } else if (nextY < -constraints.maxY) {
                     nextY = -constraints.maxY + (nextY + constraints.maxY) * 0.5;
                 }
-            }
-
-            if (nextY > constraints.maxY) {
-                nextY = constraints.maxY + (nextY - constraints.maxY) * 0.5;
-            } else if (nextY < -constraints.maxY) {
-                nextY = -constraints.maxY + (nextY + constraints.maxY) * 0.5;
             }
 
             this.translateX.set(nextX);
@@ -1008,27 +1097,86 @@ export class ImagesPreviewComponent {
     }
 
     onMouseUp() {
-        if (this.isDragging()) {
-            // Check Pull to Close for Mouse
-            if (this.scale() === 1) {
-                const y = this.translateY();
-                if (Math.abs(y) > 100) {
-                    this.close();
-                    return;
-                }
-                // Reset position if not closed
-                if (y !== 0) {
+        if (!this.isDragging()) return;
+        this.isDragging.set(false); // Reset first to enable CSS transitions
+
+        // Check Pull to Close & Swipe for Mouse
+        if (this.scale() === 1) {
+            const x = this.translateX();
+            const y = this.translateY();
+
+            // Calculate Mouse Velocity
+            let velocityX = 0;
+            let velocityY = 0;
+            if (this.touchHistory.length >= 2) {
+                const last = this.touchHistory[this.touchHistory.length - 1];
+                const first = this.touchHistory[0];
+                const dt = (last.time - first.time) || 1;
+                velocityX = (last.x - first.x) / dt;
+                velocityY = (last.y - first.y) / dt;
+            }
+
+            // Sync global velocity for potential continuation
+            this.velocityX = velocityX;
+            this.velocityY = velocityY;
+
+            // Only close if NOT locked to horizontal
+            if (this.lockDirection() !== 'horizontal' && (Math.abs(y) > 100 || Math.abs(velocityY) > 0.5)) {
+                this.isDragging.set(false);
+                this.isClosing.set(true);
+
+                // Flight animation
+                const flyDistance = velocityY * 300 + (y > 0 ? 800 : -800);
+                this.translateY.set(flyDistance);
+
+                setTimeout(() => this.close(), 250);
+                return;
+            }
+
+            // Swipe Navigation
+            const threshold = window.innerWidth * 0.25;
+            const images = this.images();
+            const total = images ? images.length : 0;
+            const index = this.currentIndex();
+
+            if (x < -threshold) {
+                // NEXT
+                if (index < total - 1) {
+                    this.animateSlide(-1);
+                } else {
+                    this.translateX.set(0);
                     this.translateY.set(0);
                 }
-                const x = this.translateX();
-                if (x !== 0) {
+                return;
+            } else if (x > threshold) {
+                // PREV
+                if (index > 0) {
+                    this.animateSlide(1);
+                } else {
                     this.translateX.set(0);
+                    this.translateY.set(0);
                 }
-            } else {
-                this.snapBack();
+                return;
             }
+
+            // Snap back if not closed/swiped
+            this.translateX.set(0);
+            this.translateY.set(0);
+        } else {
+            // Inertia for zoomed mouse drag
+            if (this.touchHistory.length >= 2) {
+                const last = this.touchHistory[this.touchHistory.length - 1];
+                const first = this.touchHistory[0];
+                const dt = (last.time - first.time) || 1;
+                this.velocityX = (last.x - first.x) / dt;
+                this.velocityY = (last.y - first.y) / dt;
+            } else {
+                this.velocityX = 0;
+                this.velocityY = 0;
+            }
+            this.startInertia();
         }
-        this.isDragging.set(false);
+        this.lockDirection.set(null);
     }
 
     onTouchEnd(event: TouchEvent) {
@@ -1064,9 +1212,17 @@ export class ImagesPreviewComponent {
                 const x = this.translateX();
                 const y = this.translateY();
 
-                // Pull to Close
-                if (Math.abs(y) > 100) {
-                    this.close();
+                // Pull to Close (Distance > 100px OR Vertical Flick Velocity > 0.5 px/ms)
+                // Skip if we are explicitly in horizontal swipe mode
+                if (this.lockDirection() !== 'horizontal' && (Math.abs(y) > 100 || Math.abs(this.velocityY) > 0.5)) {
+                    this.isDragging.set(false);
+                    this.isClosing.set(true);
+
+                    // Continue the "Flight" and shrink further
+                    const flyDistance = this.velocityY * 300 + (y > 0 ? 500 : -500);
+                    this.translateY.set(flyDistance);
+
+                    setTimeout(() => this.close(), 250);
                     return;
                 }
 
@@ -1140,7 +1296,14 @@ export class ImagesPreviewComponent {
     }
 
     close() {
-        this.closeCallback();
+        if (this.isClosing()) {
+            this.closeCallback();
+            return;
+        }
+
+        // If called via button/ESC, triggger short animation first
+        this.isClosing.set(true);
+        setTimeout(() => this.closeCallback(), 150);
     }
 
     onImageLoad(src: string) {
@@ -1240,7 +1403,7 @@ export class ImagesPreviewComponent {
 
         this.translateX.set(target);
 
-        // Wait for CSS transition (0.3s)
+        // Wait for CSS transition (0.4s)
         setTimeout(() => {
             // Update Index (silent swap)
             this.isInertia.set(true); // Disable transition
@@ -1254,7 +1417,7 @@ export class ImagesPreviewComponent {
             setTimeout(() => {
                 this.isInertia.set(false);
             }, 50);
-        }, 300);
+        }, 400);
     }
 
     // Mouse Interaction
@@ -1270,6 +1433,8 @@ export class ImagesPreviewComponent {
         this.startY = event.clientY;
         this.lastTranslateX = this.translateX();
         this.lastTranslateY = this.translateY();
+        this.lockDirection.set(null);
+        this.touchHistory = [{ x: event.clientX, y: event.clientY, time: Date.now() }];
         event.preventDefault();
     }
 
@@ -1302,6 +1467,7 @@ export class ImagesPreviewComponent {
             ];
             // Cache layout to prevent thrashing
             this.cachedConstraints = this.getConstraints();
+            this.lockDirection.set(null);
         } else if (touches.length === 2) {
             // Two fingers: Pinch
             this.isPinching.set(true);

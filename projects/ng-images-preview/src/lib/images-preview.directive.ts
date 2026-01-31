@@ -74,6 +74,18 @@ export class ImagesPreviewDirective implements OnDestroy {
     @Input() showToolbar = true;
 
     /**
+     * Whether to show next/prev navigation arrows.
+     * @default true
+     */
+    @Input() showNavigation = true;
+
+    /**
+     * Whether to show the image counter (e.g. "1 / 5").
+     * @default true
+     */
+    @Input() showCounter = true;
+
+    /**
      * Custom template to render in the toolbar (e.g. for download buttons).
      */
     @Input() toolbarExtensions: TemplateRef<any> | null = null;
@@ -160,6 +172,8 @@ export class ImagesPreviewDirective implements OnDestroy {
             this.componentRef.setInput('srcsets', this.srcsets);
         }
         this.componentRef.setInput('showThumbnails', this.showThumbnails);
+        this.componentRef.setInput('showNavigation', this.showNavigation);
+        this.componentRef.setInput('showCounter', this.showCounter);
         this.componentRef.setInput('showToolbar', this.showToolbar);
         this.componentRef.setInput('toolbarExtensions', this.toolbarExtensions);
 
