@@ -147,6 +147,10 @@ Take full control of the UI by providing a template.
 | `ngImagesPreview` | `string` | `''` | High-res URL. If empty, tries to read `src` from host or child `img`. |
 | `previewImages` | `string[]` | `[]` | List of image URLs for gallery navigation. |
 | `previewTemplate` | `TemplateRef` | `undefined` | Custom template to render instead of the default viewer. |
+| `previewSrcsets` | `string[]` | `[]` | List of `srcset` strings for gallery navigation. |
+| `showThumbnails` | `boolean` | `true` | Whether to show the thumbnail strip. |
+| `showToolbar` | `boolean` | `true` | Whether to show the top toolbar. |
+| `toolbarExtensions`| `TemplateRef` | `undefined` | Custom template for toolbar buttons. |
 
 ### Component Inputs (`ImagesPreviewComponent`)
 
@@ -158,6 +162,10 @@ If you use the component directly:
 | `images` | `string[]` | `[]` | List of images for gallery. |
 | `initialIndex` | `number` | `0` | Initial image index in gallery. |
 | `customTemplate` | `TemplateRef` | `undefined` | Custom template for the overlay content. |
+| `srcsets` | `string[]` | `[]` | List of `srcset` strings for images. |
+| `showThumbnails` | `boolean` | `true` | Whether to show the thumbnail strip. |
+| `showToolbar` | `boolean` | `true` | Whether to show the top toolbar. |
+| `toolbarExtensions`| `TemplateRef` | `undefined` | Custom template for toolbar buttons. |
 
 ### Template Context (for Custom Templates)
 

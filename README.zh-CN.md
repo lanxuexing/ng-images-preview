@@ -147,6 +147,10 @@ export class AppModule {}
 | `ngImagesPreview` | `string` | `''` | 高清图片 URL。如果为空，则尝试从宿主或子 `img` 读取 `src`。 |
 | `previewImages` | `string[]` | `[]` | 用于画廊导航的图片 URL 列表。 |
 | `previewTemplate` | `TemplateRef` | `undefined` | 用于替代默认查看器的自定义模板。 |
+| `previewSrcsets` | `string[]` | `[]` | 用于画廊导航的 `srcset` 字符串列表。 |
+| `showThumbnails` | `boolean` | `true` | 是否显示缩略图栏。 |
+| `showToolbar` | `boolean` | `true` | 是否显示顶部工具栏。 |
+| `toolbarExtensions`| `TemplateRef` | `undefined` | 工具栏按钮的自定义模板。 |
 
 ### 组件输入 (`ImagesPreviewComponent`)
 
@@ -158,6 +162,10 @@ export class AppModule {}
 | `images` | `string[]` | `[]` | 画廊图片列表。 |
 | `initialIndex` | `number` | `0` | 画廊初始索引。 |
 | `customTemplate` | `TemplateRef` | `undefined` | 覆盖层内容的自定义模板。 |
+| `srcsets` | `string[]` | `[]` | 图片的 `srcset` 列表。 |
+| `showThumbnails` | `boolean` | `true` | 是否显示缩略图栏。 |
+| `showToolbar` | `boolean` | `true` | 是否显示顶部工具栏。 |
+| `toolbarExtensions`| `TemplateRef` | `undefined` | 工具栏按钮的自定义模板。 |
 
 ### 模板上下文 (用于自定义模板)
 
