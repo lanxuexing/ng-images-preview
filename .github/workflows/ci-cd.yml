@@ -5,7 +5,9 @@ on:
     branches: [ main ]
     tags:
       - 'v*'
-      - 'beta-*'
+      - '*' # Catch-all for other tag formats like '2.0.0'
+  release:
+    types: [published] # Specifically trigger on GitHub Release UI actions
 
 jobs:
   build-and-deploy-demo:
@@ -66,7 +68,7 @@ jobs:
       - name: Determine Release Tag
         id: determine-tag
         run: |
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+          if [[ $GITHUB_REF == refs/tags/v* ]] || [[ $GITHUB_REF =~ ^refs/tags/[0-9] ]]; then
             echo "tag=latest" >> $GITHUB_OUTPUT
             echo "is_prerelease=false" >> $GITHUB_OUTPUT
           else
