@@ -5,6 +5,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use strict type checking
 - Prefer type inference when the type is obvious
 - Avoid the `any` type; use `unknown` when type is uncertain
+- **JSDoc**: All public APIs, Interfaces, Inputs, and Outputs MUST have JSDoc comments explaining their purpose, parameters, and return values.
 
 ## Angular Best Practices
 
@@ -65,3 +66,5 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - **Performance**: Use `computed` for all derived UI state. Use `effect` only for side effects (like preloading).
 - **SSR Safety**: Always inject `PLATFORM_ID` and use `isPlatformBrowser(platformId)` before accessing `window` or `document`.
 - **Vanilla CSS**: Prefer CSS variables (`--var`) over inline styles for library theming.
+- **Dependency Injection**: Use `inject()` for all dependency injection. Avoid constructor injection.
+- **Host Bindings**: Use the `host` property in `@Component` or `@Directive` metadata instead of `@HostListener` or `@HostBinding` decorators.
