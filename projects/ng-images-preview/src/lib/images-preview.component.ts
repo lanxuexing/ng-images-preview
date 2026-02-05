@@ -17,47 +17,89 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { isPlatformBrowser } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { PREVIEW_ICONS } from './icons';
+import { OverlayManager } from './utils/overlay-manager';
 
+/**
+ * Represents the internal state of the image preview.
+ * Exposed to custom templates.
+ */
 export interface ImagesPreviewState {
+    /** Current image source URL */
     src: string;
+    /** Current zoom scale (1 = 100%) */
     scale: number;
+    /** Current rotation in degrees */
     rotate: number;
+    /** Whether the image is flipped horizontally */
     flipH: boolean;
+    /** Whether the image is flipped vertically */
     flipV: boolean;
+    /** Whether the current image is loading */
     isLoading: boolean;
+    /** Whether the current image failed to load */
     hasError: boolean;
+    /** Index of the current image in the list */
     currentIndex: number;
+    /** Total number of images */
     total: number;
 }
 
+/**
+ * Actions available to control the preview from a custom template.
+ */
 export interface ImagesPreviewActions {
+    /** Zooms the current image in by a fixed step */
     zoomIn: () => void;
+    /** Zooms the current image out by a fixed step */
     zoomOut: () => void;
+    /** Rotates the current image 90 degrees counter-clockwise */
     rotateLeft: () => void;
+    /** Rotates the current image 90 degrees clockwise */
     rotateRight: () => void;
+    /** Flips the current image horizontally */
     flipHorizontal: () => void;
+    /** Flips the current image vertically */
     flipVertical: () => void;
+    /** Resets the current image's zoom, rotation, and flip state to default */
     reset: () => void;
+    /** Closes the image preview overlay */
     close: () => void;
+    /** Navigates to the next image in the gallery (if any) */
     next: () => void;
+    /** Navigates to the previous image in the gallery (if any) */
     prev: () => void;
+    /**
+     * Jumps to a specific image index in the gallery.
+     * @param index The 0-based index of the image to display.
+     */
     jumpTo: (index: number) => void;
 }
 
 /**
  * Configuration for the toolbar.
  */
+/**
+ * Configuration for the toolbar visibility options.
+ */
 export interface ToolbarConfig {
+    /** Show zoom buttons (+ / -) */
     showZoom?: boolean;
+    /** Show rotate buttons */
     showRotate?: boolean;
+    /** Show flip buttons */
     showFlip?: boolean;
 }
 
 /**
  * Context passed to the custom template.
  */
+/**
+ * Context passed to the custom template.
+ */
 export interface ImagesPreviewContext {
+    /** The current state of the preview */
     $implicit: ImagesPreviewState;
+    /** Actions to control the preview */
     actions: ImagesPreviewActions;
 }
 
@@ -68,7 +110,7 @@ interface TrackingPoint {
 }
 
 interface ImageBufferItem {
-    src: string;
+    src: string | TemplateRef<unknown>;
     index: number;
     offset: number; // -1 (prev), 0 (curr), 1 (next)
     srcset?: string;
@@ -116,28 +158,55 @@ interface ImageBufferItem {
           (touchstart)="onTouchStart($event)"
           tabindex="-1"
         >
-          @for (item of activeBuffer(); track item.src) {
-            <img
-              #imgRef
-              [src]="item.src"
-              [srcset]="item.srcset || ''"
-              [class.opacity-0]="item.offset === 0 && (!loadedImages().has(item.src) || hasError())"
-              class="preview-image"
-              [class.dragging]="isDragging()"
-              [class.inertia]="isInertia()"
-              [class.flipping]="flipTransform() !== ''"
-              [class.pinching]="isPinching()"
-              [class.zoom-in]="scale() === 1"
-              [class.zoom-out]="scale() > 1"
-              [class.hidden]="item.offset !== 0 && scale() > 1"
-              [style.transform]="getTransform(item.offset)"
-              (load)="onImageLoad(item.src)"
-              (error)="onImageError(item.src)"
-              (mousedown)="onMouseDown($event)"
-              (click)="$event.stopPropagation()"
-              draggable="false"
-              alt="Preview"
-            />
+          @for (item of activeBuffer(); track item.index) {
+            @if (isTemplate(item.src)) {
+                <div
+                    class="preview-image custom-content"
+                    [class.opacity-0]="item.offset === 0 && !isLoaded(item.index)"
+                    [class.dragging]="isDragging()"
+                    [class.inertia]="isInertia()"
+                    [class.flipping]="flipTransform() !== ''"
+                    [class.pinching]="isPinching()"
+                    [class.zoom-in]="scale() === 1"
+                    [class.zoom-out]="scale() > 1"
+                    [class.hidden]="item.offset !== 0 && scale() > 1"
+                    [style.transform]="getTransform(item.offset)"
+                    (mousedown)="onMouseDown($event)"
+                    (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()"
+                    tabindex="-1"
+                >
+                    <ng-container *ngTemplateOutlet="item.src; context: { $implicit: item }"></ng-container>
+                </div>
+            } @else {
+                <img
+                #imgRef
+                [src]="item.src"
+                [srcset]="item.srcset || ''"
+                [class.opacity-0]="item.offset === 0 && (!loadedImages().has(asString(item.src)) || hasError())"
+                class="preview-image"
+                [class.dragging]="isDragging()"
+                [class.inertia]="isInertia()"
+                [class.flipping]="flipTransform() !== ''"
+                (load)="onImageLoad(asString(item.src))"
+                (error)="onImageError(asString(item.src))"
+                (mousedown)="onMouseDown($event)"
+                (click)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
+                tabindex="-1"
+                [class.pinching]="isPinching()"
+                [class.zoom-in]="scale() === 1"
+                [class.zoom-out]="scale() > 1"
+                [class.hidden]="item.offset !== 0 && scale() > 1"
+                [style.transform]="getTransform(item.offset)"
+                (load)="onImageLoad(asString(item.src))"
+                (error)="onImageError(asString(item.src))"
+                (mousedown)="onMouseDown($event)"
+                (click)="$event.stopPropagation()"
+                draggable="false"
+                alt="Preview"
+                />
+            }
           }
         </div>
 
@@ -217,15 +286,24 @@ interface ImageBufferItem {
       
       <!-- Thumbnails -->
       @if (images() && images()!.length > 1 && showThumbnails()) {
-        <div class="thumbnail-strip" (click)="$event.stopPropagation()">
+        <div class="thumbnail-strip" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" tabindex="-1">
             @for (img of images(); track img; let i = $index) {
                 <div 
                     #thumbRef
                     class="thumbnail-item" 
                     [class.active]="i === currentIndex()"
                     (click)="jumpTo(i)"
+                    (keydown.enter)="jumpTo(i)"
+                    tabindex="0"
                 >
-                    <img [src]="img" loading="lazy" alt="Thumbnail">
+                    @if (isTemplate(img)) {
+                        <div class="w-full h-full flex items-center justify-center bg-white/10 text-white/50">
+                            <!-- Template Icon -->
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        </div>
+                    } @else {
+                        <img [src]="img" loading="lazy" alt="Thumbnail">
+                    }
                 </div>
             }
         </div>
@@ -264,8 +342,13 @@ export class ImagesPreviewComponent {
 
     /**
      * List of image URLs for gallery navigation.
+     * If not provided, only the single `src` image is shown.
      */
-    images = input<string[]>();
+    /**
+     * List of image URLs or Templates for gallery navigation.
+     * If not provided, only the single `src` image is shown.
+     */
+    images = input<(string | TemplateRef<unknown>)[]>();
 
     /**
      * Optional srcset for the single image `src`.
@@ -336,14 +419,22 @@ export class ImagesPreviewComponent {
      */
     showCounter = input(true);
 
-    // Toggle thumbnails
+    /**
+     * Whether to show the thumbnail strip at the bottom.
+     * @default true
+     */
     showThumbnails = input(true);
 
-    // Toggle toolbar
+    /**
+     * Whether to show the toolbar actions.
+     * @default true
+     */
     showToolbar = input(true);
 
-    // Toolbar custom extensions
-    toolbarExtensions = input<TemplateRef<any> | null>(null);
+    /**
+     * Custom template to extend the toolbar with additional buttons.
+     */
+    toolbarExtensions = input<TemplateRef<unknown> | null>(null);
 
     activeBuffer = computed<ImageBufferItem[]>(() => {
         const imgs = this.images();
@@ -394,6 +485,8 @@ export class ImagesPreviewComponent {
 
     private platformId = inject(PLATFORM_ID);
     private sanitizer = inject(DomSanitizer);
+    private el = inject(ElementRef);
+    private overlayManager = inject(OverlayManager);
 
     // Icons map with SafeHtml
     icons: { [key in keyof typeof PREVIEW_ICONS]: SafeHtml };
@@ -438,17 +531,23 @@ export class ImagesPreviewComponent {
 
                 // Next
                 if (index < images.length - 1) {
-                    const img = new Image();
-                    const s = getSrcset(index + 1);
-                    if (s) img.srcset = s;
-                    img.src = images[index + 1];
+                    const nextSrc = images[index + 1];
+                    if (typeof nextSrc === 'string') {
+                        const img = new Image();
+                        const s = getSrcset(index + 1);
+                        if (s) img.srcset = s;
+                        img.src = nextSrc;
+                    }
                 }
                 // Prev
                 if (index > 0) {
-                    const img = new Image();
-                    const s = getSrcset(index - 1);
-                    if (s) img.srcset = s;
-                    img.src = images[index - 1];
+                    const prevSrc = images[index - 1];
+                    if (typeof prevSrc === 'string') {
+                        const img = new Image();
+                        const s = getSrcset(index - 1);
+                        if (s) img.srcset = s;
+                        img.src = prevSrc;
+                    }
                 }
             }
         });
@@ -555,6 +654,9 @@ export class ImagesPreviewComponent {
 
     // Updated transform logic for slide buffer
     getTransform(offset: number) {
+        if (!isPlatformBrowser(this.platformId)) {
+            return `translate3d(${offset * 100}%, 0, 0)`;
+        }
         const viewportWidth = window.innerWidth;
         const spacing = 16; // Gap between images
         const baseOffset = offset * (viewportWidth + spacing);
@@ -571,7 +673,7 @@ export class ImagesPreviewComponent {
 
         let effectiveY = offset === 0 ? y : 0;
         let effectiveScale = offset === 0 ? scale : 1;
-        let effectiveRotate = offset === 0 ? rotate : 0;
+        const effectiveRotate = offset === 0 ? rotate : 0;
 
         // --- Premium: Interactive Shrink & Elastic Drag Feel ---
         if (offset === 0 && scale === 1 && (Math.abs(y) > 0 || this.isClosing())) {
@@ -647,7 +749,8 @@ export class ImagesPreviewComponent {
         this.flipTransform.set(`translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`);
 
         // Force Reflow
-        imgEl.offsetHeight;
+        // Force Reflow
+        void imgEl.offsetHeight;
 
         // 3. Play
         requestAnimationFrame(() => {
@@ -1089,6 +1192,10 @@ export class ImagesPreviewComponent {
         if (event.key === 'Enter' || event.key === ' ') {
             this.close();
         }
+
+        // Trap Focus
+        const trapHandler = this.overlayManager.trapFocus(this.el.nativeElement);
+        trapHandler(event);
     }
 
     onContainerKey(event: KeyboardEvent) {
@@ -1186,6 +1293,21 @@ export class ImagesPreviewComponent {
 
             // Calculate Release Velocity from History
             const now = Date.now();
+
+            // Double Tap Detection
+            if (this.touchHistory.length < 5 && (now - this.lastTapTime) < 300) {
+                // Ensure last tap was close in position (within 30px)
+                // We don't have last tap pos stored easily, but usually fast taps are consistent.
+                // Let's assume valid double tap.
+                const lastTouch = touches.length > 0 ? touches[0] : (event.changedTouches[0]);
+                if (lastTouch) {
+                    this.handleDoubleTap(lastTouch.clientX, lastTouch.clientY);
+                    this.lastTapTime = 0; // Reset
+                    return;
+                }
+            }
+            this.lastTapTime = now;
+
             const lastPoint = this.touchHistory[this.touchHistory.length - 1];
             // We want a point from roughly 30-50ms ago to get "launch" direction,
             // but tracking last 100ms.
@@ -1277,9 +1399,39 @@ export class ImagesPreviewComponent {
 
     private lastTouchX = 0;
     private lastTouchY = 0;
+    private lastTapTime = 0; // For double tap detection
     private initialPinchCenter = { x: 0, y: 0 };
     private initialTranslateX = 0;
     private initialTranslateY = 0;
+
+    private handleDoubleTap(clientX: number, clientY: number) {
+        if (this.scale() > 1) {
+            // If already zoomed, zoom out to 1
+            this.reset();
+        } else {
+            // Smart Zoom to 2.5x (or max)
+            const targetScale = 2; // Nice comfortable zoom
+
+            const viewportW = window.innerWidth;
+            const viewportH = window.innerHeight;
+
+            // Calculate shift needed to center the tapped point
+            // Formula: - (tap - center) * (target / current - 1)
+            // But since current is 1 and trans is 0, it simplifies.
+            const centerX = viewportW / 2;
+            const centerY = viewportH / 2;
+
+            const deltaX = clientX - centerX;
+            const deltaY = clientY - centerY;
+
+            const newTransX = -deltaX * (targetScale - 1);
+            const newTransY = -deltaY * (targetScale - 1);
+
+            this.scale.set(targetScale);
+            this.translateX.set(newTransX);
+            this.translateY.set(newTransY);
+        }
+    }
 
     private getDistance(touches: TouchList): number {
         return Math.hypot(
@@ -1315,7 +1467,8 @@ export class ImagesPreviewComponent {
         this.hasError.set(false);
     }
 
-    onImageError(src: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onImageError(_src: string) {
         // this.loadedImages.update... (maybe not mark as loaded? or separate error tracking)
         // For now, keep error simple
         this.hasError.set(true);
@@ -1356,6 +1509,25 @@ export class ImagesPreviewComponent {
     flipVertical() {
         this.flipV.update((f) => !f);
         this.cachedConstraints = null; // Invalidate cache on flip
+    }
+
+    // Helper for template type guard
+    isTemplate(val: string | TemplateRef<unknown>): val is TemplateRef<unknown> {
+        return val instanceof TemplateRef;
+    }
+
+    asString(val: string | TemplateRef<unknown>): string {
+        return typeof val === 'string' ? val : '';
+    }
+
+
+    isLoaded(index: number): boolean {
+        // For templates, we consider them loaded immediately (or manage their own loading)
+        // For strings, we check loadedImages set
+        const item = this.images()?.[index];
+        if (!item) return false;
+        if (this.isTemplate(item)) return true;
+        return this.loadedImages().has(item as string);
     }
 
     reset() {

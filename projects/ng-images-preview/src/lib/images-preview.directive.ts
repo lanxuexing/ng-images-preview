@@ -2,19 +2,16 @@
 import {
     Directive,
     ElementRef,
-    HostListener,
     Input,
     TemplateRef,
-    ApplicationRef,
-    EnvironmentInjector,
-    createComponent,
-    ComponentRef,
     inject,
     OnDestroy,
     PLATFORM_ID
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ImagesPreviewComponent, ImagesPreviewContext, ToolbarConfig } from './images-preview.component';
+import { ImagesPreviewContext, ToolbarConfig } from './images-preview.component';
+import { ImagesPreviewService } from './images-preview.service';
+import { ImagesPreviewRef } from './images-preview-ref';
 
 /**
  * Directive to open the image preview.
@@ -22,7 +19,10 @@ import { ImagesPreviewComponent, ImagesPreviewContext, ToolbarConfig } from './i
  */
 @Directive({
     selector: '[ngImagesPreview]',
-    standalone: true
+    host: {
+        '(click)': 'onClick($event)',
+        '[style.cursor]': '"pointer"'
+    }
 })
 export class ImagesPreviewDirective implements OnDestroy {
     /**
@@ -56,9 +56,6 @@ export class ImagesPreviewDirective implements OnDestroy {
     /**
      * List of srcsets corresponding to the `previewImages` array.
      */
-    /**
-     * List of srcsets corresponding to the `previewImages` array.
-     */
     @Input() srcsets?: string[];
 
     /**
@@ -88,7 +85,7 @@ export class ImagesPreviewDirective implements OnDestroy {
     /**
      * Custom template to render in the toolbar (e.g. for download buttons).
      */
-    @Input() toolbarExtensions: TemplateRef<any> | null = null;
+    @Input() toolbarExtensions: TemplateRef<unknown> | null = null;
 
     /**
      * Type guard helper for strict template type checking.
@@ -101,19 +98,16 @@ export class ImagesPreviewDirective implements OnDestroy {
         return true;
     }
 
-    private componentRef: ComponentRef<ImagesPreviewComponent> | null = null;
-
-    private appRef = inject(ApplicationRef);
-    private injector = inject(EnvironmentInjector);
+    private ref: ImagesPreviewRef | null = null;
+    private service = inject(ImagesPreviewService);
     private el = inject(ElementRef<HTMLElement>);
     private platformId = inject(PLATFORM_ID);
 
-    @HostListener('click', ['$event'])
     onClick(event: Event): void {
         event.stopPropagation();
 
         // Prevent duplicate open
-        if (this.componentRef) return;
+        if (this.ref) return;
 
         // Determine Source
         const hostEl = this.el.nativeElement;
@@ -135,64 +129,33 @@ export class ImagesPreviewDirective implements OnDestroy {
         }
     }
 
-    @HostListener('style.cursor')
-    readonly cursor = 'pointer';
-
     private openPreview(src: string, rect: DOMRect): void {
         if (!isPlatformBrowser(this.platformId)) return;
 
-        // Create Component
-        this.componentRef = createComponent(ImagesPreviewComponent, {
-            environmentInjector: this.injector
+        this.ref = this.service.open(src, {
+            images: this.previewImages,
+            initialIndex: this.previewImages.indexOf(src),
+            customTemplate: this.previewTemplate,
+            toolbarConfig: this.toolbarConfig,
+            srcset: this.srcset,
+            srcsets: this.srcsets,
+            showThumbnails: this.showThumbnails,
+            showNavigation: this.showNavigation,
+            showCounter: this.showCounter,
+            showToolbar: this.showToolbar,
+            toolbarExtensions: this.toolbarExtensions,
+            openerRect: rect
         });
 
-        // Set Inputs
-        this.componentRef.setInput('src', src);
-        this.componentRef.setInput('openerRect', rect);
-
-        if (this.previewImages.length > 0) {
-            this.componentRef.setInput('images', this.previewImages);
-            const index = this.previewImages.indexOf(src);
-            this.componentRef.setInput('initialIndex', index >= 0 ? index : 0);
-        }
-
-        if (this.previewTemplate) {
-            this.componentRef.setInput('customTemplate', this.previewTemplate);
-        }
-
-        if (this.toolbarConfig) {
-            this.componentRef.setInput('toolbarConfig', this.toolbarConfig);
-        }
-
-        if (this.srcset) {
-            this.componentRef.setInput('srcset', this.srcset);
-        }
-
-        if (this.srcsets) {
-            this.componentRef.setInput('srcsets', this.srcsets);
-        }
-        this.componentRef.setInput('showThumbnails', this.showThumbnails);
-        this.componentRef.setInput('showNavigation', this.showNavigation);
-        this.componentRef.setInput('showCounter', this.showCounter);
-        this.componentRef.setInput('showToolbar', this.showToolbar);
-        this.componentRef.setInput('toolbarExtensions', this.toolbarExtensions);
-
-        // Set Callbacks
-        this.componentRef.instance.closeCallback = () => this.destroyPreview();
-
-        // Attach to App
-        this.appRef.attachView(this.componentRef.hostView);
-
-        // Append to Body
-        const domElem = (this.componentRef.hostView as unknown as { rootNodes: HTMLElement[] }).rootNodes[0];
-        document.body.appendChild(domElem);
+        this.ref.afterClosed$.subscribe(() => {
+            this.ref = null;
+        });
     }
 
     private destroyPreview(): void {
-        if (this.componentRef) {
-            this.appRef.detachView(this.componentRef.hostView);
-            this.componentRef.destroy();
-            this.componentRef = null;
+        if (this.ref) {
+            this.ref.close();
+            this.ref = null;
         }
     }
 
