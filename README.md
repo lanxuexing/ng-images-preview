@@ -26,10 +26,10 @@ Check out the component in action: **[https://lanxuexing.github.io/ng-images-pre
 
 - 🚀 **Signals-Based**: High performance and reactive by design.
 - 🎨 **Vanilla CSS**: Zero dependencies, fully customizable via CSS variables.
-- � **Service API**: Open previews programmatically via `ImagesPreviewService` without touching templates.
+- 📡 **Service API**: Open previews programmatically via `ImagesPreviewService` without touching templates.
 - 🧱 **Gallery Component**: Ready-to-use `<ng-images-gallery>` grid component.
 - 🧩 **Mixed Content**: Support for mixing Images and `TemplateRef` (Videos, PDFs) in the same gallery.
-- �🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
+- 🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
 - 📱 **Mobile Ready**: Swipe to navigate, double-tap to zoom, pinch-to-zoom gestures.
 - 🖱️ **PC Friendly**: Mouse horizontal swipe navigation with inertia.
 - 👆 **Pull-to-Close**: Drag down to close the preview (like native apps).
