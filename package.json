@@ -1,6 +1,6 @@
 {
   "name": "ng-images-preview",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "🚀 High-performance Angular 18+ Image Preview & Gallery. Features native-like mobile gestures (Pinch-to-Zoom, Pull-to-Close), auto-thumbnails & smart preloading. Built with Signals & Zero-Dep Vanilla CSS.",
   "scripts": {
     "ng": "ng",
