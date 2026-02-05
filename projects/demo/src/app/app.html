@@ -33,6 +33,15 @@
           routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
         Custom Template
       </a>
+
+      <a routerLink="/advanced"
+        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
+        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
+        <span
+          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
+          routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
+        Advanced
+      </a>
     </nav>
 
     <!-- Theme Toggle (Desktop) -->
@@ -88,6 +97,11 @@
       routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
       class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
       <span class="text-xs mt-1">Custom</span>
+    </a>
+    <a routerLink="/advanced"
+      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
+      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
+      <span class="text-xs mt-1">Advanced</span>
     </a>
     <button (click)="toggleTheme()"
       class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">

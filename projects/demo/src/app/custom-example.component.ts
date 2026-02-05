@@ -75,7 +75,10 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300">
             
             <!-- Custom Header -->
-            <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10" (click)="$event.stopPropagation()">
+            <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10" 
+                 (click)="$event.stopPropagation()" 
+                 (keydown.enter)="$event.stopPropagation()"
+                 tabindex="-1">
                 <div class="bg-gray-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-mono text-gray-600 dark:text-slate-400 transition-colors">
                     Zoom: {{ (state.scale * 100).toFixed(0) }}% | Rotation: {{ state.rotate }}°
                 </div>
@@ -94,7 +97,10 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
              </div>
 
              <!-- Custom Bottom Toolbar -->
-             <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl backdrop-blur-sm" (click)="$event.stopPropagation()">
+             <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl backdrop-blur-sm" 
+                  (click)="$event.stopPropagation()"
+                  (keydown.enter)="$event.stopPropagation()"
+                  tabindex="-1">
                 <button (click)="actions.zoomOut()" class="hover:text-blue-400 font-bold text-xl px-2">-</button>
                 <div class="w-px h-6 bg-white/20"></div>
                 <button (click)="actions.zoomIn()" class="hover:text-blue-400 font-bold text-xl px-2">+</button>

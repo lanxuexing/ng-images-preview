@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ImagesPreviewDirective, ToolbarConfig } from 'ng-images-preview';
+import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGalleryComponent } from 'ng-images-preview';
 
 @Component({
   selector: 'app-basic-example',
   standalone: true,
-  imports: [CommonModule, ImagesPreviewDirective],
+  imports: [CommonModule, ImagesPreviewDirective, ImagesGalleryComponent],
   template: `
     <div class="space-y-6 animate-in fade-in duration-500">
       <header class="mb-10">
@@ -32,6 +32,19 @@ import { ImagesPreviewDirective, ToolbarConfig } from 'ng-images-preview';
             class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wider"
             >Interactive</span
           >
+        </div>
+
+        
+        <div class="mb-8">
+            <button 
+                (click)="openServicePreview()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-indigo-500/20"
+            >
+                Open via Service API
+            </button>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                Calls <code>service.open(src, config)</code> directly.
+            </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -309,6 +322,29 @@ import { ImagesPreviewDirective, ToolbarConfig } from 'ng-images-preview';
         </div>
       </section>
 
+      <!-- New Gallery Component Section -->
+      <section
+        class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-8 mb-12"
+      >
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">NG Images Gallery</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Ready-to-use grid component</p>
+          </div>
+          <span
+            class="px-3 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 rounded-full text-xs font-bold uppercase tracking-wider"
+            >New</span
+          >
+        </div>
+
+        <ng-images-gallery 
+            [images]="largeImageList" 
+            [columns]="4" 
+            gap="12px"
+            aspectRatio="16 / 9"
+        ></ng-images-gallery>
+      </section>
+
       <section class="bg-slate-900 dark:bg-black rounded-3xl p-5 md:p-8 shadow-2xl relative overflow-hidden group border border-white/5 dark:border-slate-800">
         <div
           class="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity"
@@ -450,5 +486,16 @@ export class BasicExampleComponent {
     a.download = 'download.jpg';
     a.click();
     */
+  }
+
+  private previewService = inject(ImagesPreviewService);
+
+  openServicePreview() {
+    this.previewService.open(this.imageList[0], {
+      images: this.imageList,
+      initialIndex: 0,
+      showThumbnails: true,
+      showToolbar: true
+    });
   }
 }

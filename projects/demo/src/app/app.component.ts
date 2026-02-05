@@ -1,4 +1,4 @@
-import { Component, inject, Renderer2, signal, OnInit, computed, effect } from '@angular/core';
+import { Component, inject, Renderer2, signal, OnInit, effect } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
