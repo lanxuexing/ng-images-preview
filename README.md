@@ -26,7 +26,10 @@ Check out the component in action: **[https://lanxuexing.github.io/ng-images-pre
 
 - 🚀 **Signals-Based**: High performance and reactive by design.
 - 🎨 **Vanilla CSS**: Zero dependencies, fully customizable via CSS variables.
-- 🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
+- � **Service API**: Open previews programmatically via `ImagesPreviewService` without touching templates.
+- 🧱 **Gallery Component**: Ready-to-use `<ng-images-gallery>` grid component.
+- 🧩 **Mixed Content**: Support for mixing Images and `TemplateRef` (Videos, PDFs) in the same gallery.
+- �🖼️ **Multi-Image Gallery**: Navigate through a list of images with arrows or swipe gestures.
 - 📱 **Mobile Ready**: Swipe to navigate, double-tap to zoom, pinch-to-zoom gestures.
 - 🖱️ **PC Friendly**: Mouse horizontal swipe navigation with inertia.
 - 👆 **Pull-to-Close**: Drag down to close the preview (like native apps).
@@ -99,67 +102,110 @@ import { NgImagesPreviewModule } from 'ng-images-preview';
 export class AppModule {}
 ```
 
-### 2. Basic Usage
+### 2. Cookbook / Usage Examples
 
-**Option A: Zero Config** (Auto-detects source)
+#### A. Service-Based API (Programmatic)
+Ideal for buttons, dynamic actions, or when you don't want to pollute your template with directives.
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { ImagesPreviewService } from 'ng-images-preview';
+
+@Component({ ... })
+export class MyComponent {
+  private previewService = inject(ImagesPreviewService);
+
+  openGallery() {
+    this.previewService.open('first.jpg', {
+      images: ['first.jpg', 'second.jpg', 'third.jpg'], // Array of images
+      initialIndex: 0, // Start at index 0
+      showThumbnails: true
+    });
+  }
+}
+```
+
+#### B. The Gallery Component (`<ng-images-gallery>`)
+A ready-to-use responsive grid that handles the layout and click events for you.
+
+```typescript
+import { ImagesGalleryComponent } from 'ng-images-preview';
+
+@Component({
+  imports: [ImagesGalleryComponent],
+  template: `
+    <ng-images-gallery 
+      [images]="['img1.jpg', 'img2.jpg', 'img3.jpg']" 
+      [columns]="3" 
+      gap="10px">
+    </ng-images-gallery>
+  `
+})
+class MyComponent {}
+```
+
+#### C. Directive (The "classic" way)
+Attach the preview behavior to any existing image or element.
+
 ```html
-<!-- Direct usage on an img tag -->
+<!-- Simple Single Image -->
 <img src="small.jpg" ngImagesPreview>
 
-<!-- Usage on a container (finds inner img) -->
-<div ngImagesPreview><img src="small.jpg"></div>
-```
-
-**Option B: Separate High-Res Source**
-```html
+<!-- Separate High-Res Source -->
 <img src="small.jpg" [ngImagesPreview]="'huge-original.jpg'">
-```
 
-**Option C: Gallery Mode**
-Pass a list of images to `previewImages` to enable gallery navigation and the automatic **Thumbnail Strip**.
-```html
-<img 
-  src="item1.jpg" 
-  [ngImagesPreview]="'item1-highres.jpg'"
-  [previewImages]="['item1.jpg', 'item2.jpg', 'item3.jpg']">
-```
-
-**Option D: Toolbar Extensions**
-Add custom buttons (like Download) using an `ng-template`.
-```html
-<ng-template #myExtraButtons>
-  <button class="toolbar-btn" (click)="download()">
-    <svg>...</svg>
-  </button>
-</ng-template>
-
-<img src="pic.jpg" ngImagesPreview [toolbarExtensions]="myExtraButtons">
-```
-
-**Option E: Performance (Srcsets)**
-Support responsive images for faster loading on mobile.
-```html
+<!-- Gallery Mode on an Image -->
 <img 
   src="thumb.jpg" 
-  ngImagesPreview 
-  [previewSrcsets]="['image-400w.jpg 400w, image-800w.jpg 800w']">
+  [ngImagesPreview]="'full.jpg'"
+  [previewImages]="['full.jpg', 'other.jpg']">
 ```
 
-### 3. Custom Template
+#### D. Mixed Content (Images + Templates)
+You can mix images with custom templates (like Video players) in the same gallery slide.
 
-Take full control of the UI by providing a template.
+```typescript
+// In your component
+@ViewChild('videoTpl') videoTpl: TemplateRef<any>;
+
+openMixedGallery() {
+  this.service.open('img1.jpg', {
+    images: [
+      'img1.jpg',
+      this.videoTpl, // Use a TemplateRef here!
+      'img3.jpg'
+    ]
+  });
+}
+```
+
+### 3. Custom Template (Complete UI Override)
+Take full control of the preview overlay UI.
 
 ```html
 <ng-template #myPreview let-state let-actions="actions">
   <div class="custom-overlay">
-    <img [src]="state.src" [style.transform]="'scale(' + state.scale + ') rotate(' + state.rotate + 'deg)'">
+    <!-- Render content based on state -->
+    <ng-container *ngIf="isTemplate(state.src)">
+        <ng-container *ngTemplateOutlet="state.src"></ng-container>
+    </ng-container>
+    <img *ngIf="!isTemplate(state.src)" [src]="state.src">
+    
     <button (click)="actions.zoomIn()">Zoom +</button>
     <button (click)="actions.close()">Close</button>
   </div>
 </ng-template>
 
-<img src="thumb.jpg" ngImagesPreview="large.jpg" [previewTemplate]="myPreview">
+<img src="thumb.jpg" ngImagesPreview [previewTemplate]="myPreview">
 ```
+
+## 🌏 Server-Side Rendering (SSR)
+
+This library is fully compatible with **Angular Universal** and **SSR** (Server-Side Rendering).
+
+-   **Safe DOM Access**: All access to `window`, `document`, and `body` is guarded by `isPlatformBrowser` checks.
+-   **No Hydration Mismatches**: The internal structure remains consistent between server and client.
+-   **Performance**: The `ImagesGalleryComponent` uses `NgOptimizedImage` for LCP-friendly image loading.
 
 ## ⚙️ Configuration
 

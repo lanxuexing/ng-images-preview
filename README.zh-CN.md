@@ -26,6 +26,9 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 
 - 🚀 **基于 Signals**: 响应式设计，高性能。
 - 🎨 **原生 CSS**: 无第三方依赖，可通过 CSS 变量完全定制。
+- 📡 **服务式 API**: 通过 `ImagesPreviewService` 编程式打开预览，无需修改模板。
+- 🧱 **画廊组件**: 开箱即用的 `<ng-images-gallery>` 网格组件。
+- 🧩 **混合内容**: 支持在同一个画廊中混合显示图片和 `TemplateRef` (如视频、PDF)。
 - 🖼️ **多图画廊**: 支持箭头导航或滑动切换图片列表。
 - 📱 **移动端就绪**: 支持滑动切换、双击缩放、捏合缩放手势。
 - 🖱️ **鼠标手势适配**: PC 端支持鼠标横向滑动切换图片，并支持惯性效果。
@@ -99,67 +102,110 @@ import { NgImagesPreviewModule } from 'ng-images-preview';
 export class AppModule {}
 ```
 
-### 2. 基本用法
+### 2. 食谱 / 用法示例 (Cookbook)
 
-**选项 A: 零配置** (自动检测源)
+#### A. 基于服务的 API (编程式)
+非常适合按钮点击、动态操作，或者你不想在模板中到处写指令的场景。
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { ImagesPreviewService } from 'ng-images-preview';
+
+@Component({ ... })
+export class MyComponent {
+  private previewService = inject(ImagesPreviewService);
+
+  openGallery() {
+    this.previewService.open('first.jpg', {
+      images: ['first.jpg', 'second.jpg', 'third.jpg'], // 图片数组
+      initialIndex: 0, // 从第 0 张开始
+      showThumbnails: true
+    });
+  }
+}
+```
+
+#### B. 画廊组件 (`<ng-images-gallery>`)
+一个开箱即用的响应式网格组件，自动处理布局和点击事件。
+
+```typescript
+import { ImagesGalleryComponent } from 'ng-images-preview';
+
+@Component({
+  imports: [ImagesGalleryComponent],
+  template: `
+    <ng-images-gallery 
+      [images]="['img1.jpg', 'img2.jpg', 'img3.jpg']" 
+      [columns]="3" 
+      gap="10px">
+    </ng-images-gallery>
+  `
+})
+class MyComponent {}
+```
+
+#### C. 指令模式 (经典用法)
+将预览行为附加到任何现有的图片或元素上。
+
 ```html
-<!-- 直接在 img 标签上使用 -->
+<!-- 简单单图 -->
 <img src="small.jpg" ngImagesPreview>
 
-<!-- 在容器上使用 (自动查找内部 img) -->
-<div ngImagesPreview><img src="small.jpg"></div>
-```
-
-**选项 B: 指定高清源**
-```html
+<!-- 指定高清大图源 -->
 <img src="small.jpg" [ngImagesPreview]="'huge-original.jpg'">
-```
 
-**选项 C: 画廊模式**
-传入图片列表到 `previewImages` 以启用画廊导航及自动 **缩略图栏**。
-```html
-<img 
-  src="item1.jpg" 
-  [ngImagesPreview]="'item1-highres.jpg'"
-  [previewImages]="['item1.jpg', 'item2.jpg', 'item3.jpg']">
-```
-
-**选项 D: 工具栏扩展**
-使用 `ng-template` 添加自定义按钮 (比如下载按钮)。
-```html
-<ng-template #myExtraButtons>
-  <button class="toolbar-btn" (click)="download()">
-    <svg>...</svg>
-  </button>
-</ng-template>
-
-<img src="pic.jpg" ngImagesPreview [toolbarExtensions]="myExtraButtons">
-```
-
-**选项 E: 响应式性能 (Srcsets)**
-支持响应式图片，在移动端加载更快的资源。
-```html
+<!-- 图片上的画廊模式 -->
 <img 
   src="thumb.jpg" 
-  ngImagesPreview 
-  [previewSrcsets]="['image-400w.jpg 400w, image-800w.jpg 800w']">
+  [ngImagesPreview]="'full.jpg'"
+  [previewImages]="['full.jpg', 'other.jpg']">
 ```
 
-### 3. 自定义模板
+#### D. 混合内容 (图片 + 模板)
+你可以在同一个画廊中混合显示图片和自定义模板（例如视频播放器）。
 
-通过提供模板完全掌控 UI。
+```typescript
+// 在你的组件中
+@ViewChild('videoTpl') videoTpl: TemplateRef<any>;
+
+openMixedGallery() {
+  this.service.open('img1.jpg', {
+    images: [
+      'img1.jpg',
+      this.videoTpl, // 这里可以使用 TemplateRef!
+      'img3.jpg'
+    ]
+  });
+}
+```
+
+### 3. 自定义模板 (完全 UI 覆盖)
+完全接管预览层的 UI 展示。
 
 ```html
 <ng-template #myPreview let-state let-actions="actions">
   <div class="custom-overlay">
-    <img [src]="state.src" [style.transform]="'scale(' + state.scale + ') rotate(' + state.rotate + 'deg)'">
-    <button (click)="actions.zoomIn()">放大</button>
+    <!-- 根据状态渲染内容 -->
+    <ng-container *ngIf="isTemplate(state.src)">
+        <ng-container *ngTemplateOutlet="state.src"></ng-container>
+    </ng-container>
+    <img *ngIf="!isTemplate(state.src)" [src]="state.src">
+    
+    <button (click)="actions.zoomIn()">放大 +</button>
     <button (click)="actions.close()">关闭</button>
   </div>
 </ng-template>
 
-<img src="thumb.jpg" ngImagesPreview="large.jpg" [previewTemplate]="myPreview">
+<img src="thumb.jpg" ngImagesPreview [previewTemplate]="myPreview">
 ```
+
+## 🌏 服务端渲染 (SSR)
+
+本库完美支持 **Angular Universal** 和 **SSR** (服务端渲染)。
+
+-   **安全的 DOM 访问**: 所有对 `window`, `document`, `body` 的访问都经过 `isPlatformBrowser` 严格检查，防止在服务端崩溃。
+-   **无水合错误**: 内部结构在服务端和客户端保持一致，避免 Hydration Mismatch。
+-   **高性能**: `ImagesGalleryComponent` 使用了 `NgOptimizedImage`，对 LCP (最大内容绘制) 非常友好。
 
 ## ⚙️ 配置
 
