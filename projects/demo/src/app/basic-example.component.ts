@@ -12,7 +12,7 @@ import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGall
       <!-- Apple Hero Banner -->
       <section class="text-center py-10 md:py-16 max-w-3xl mx-auto space-y-6">
         <div class="inline-flex items-center gap-2 apple-badge">
-          <span>Angular 18+ Signals</span>
+          <span>Angular 18 · 19 · 20 · 21 · 22+</span>
           <span class="w-1 h-1 rounded-full bg-current"></span>
           <span>Zero Dependency</span>
         </div>
@@ -22,7 +22,7 @@ import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGall
         </h1>
 
         <p class="text-base md:text-xl text-[#86868b] dark:text-[#a1a1a6] font-normal leading-relaxed max-w-2xl mx-auto">
-          High-performance Image Preview & Gallery for Angular. Features mobile pinch-to-zoom, pull-to-close momentum, auto-thumbnails & smart preloading.
+          High-performance Image Preview & Gallery for Angular 18+. Features mobile pinch-to-zoom, pull-to-close momentum, auto-thumbnails & smart preloading.
         </p>
 
         <div class="flex items-center justify-center gap-4 pt-2">
@@ -59,17 +59,21 @@ import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGall
           </div>
         </div>
 
-        <!-- Bento Card 2: Signals Architecture -->
+        <!-- Bento Card 2: Angular Version Compatibility -->
         <div class="apple-card p-6 md:p-8 flex flex-col justify-between">
           <div class="space-y-3">
-            <span class="apple-badge">Architecture</span>
-            <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Angular Signals</h3>
+            <span class="apple-badge bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">Compatibility</span>
+            <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Angular 18 – 22+</h3>
             <p class="text-sm text-[#86868b] dark:text-[#a1a1a6] leading-relaxed">
-              State management powered by Angular Signals for fine-grained change detection and minimal bundle size.
+              Full compatibility across Angular 18, 19, 20, 21 and Angular 22+ with APF partial compilation.
             </p>
           </div>
-          <div class="pt-4 text-xs font-mono text-[#6e6e73] dark:text-[#86868b]">
-            Zero-Dep Vanilla CSS
+          <div class="pt-4 flex flex-wrap gap-1.5 text-[11px] font-mono font-semibold">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">v18</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">v19</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">v20</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">v21</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">v22+</span>
           </div>
         </div>
       </section>
