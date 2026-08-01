@@ -9,7 +9,7 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 [![GitHub repo size](https://img.shields.io/github/repo-size/lanxuexing/ng-images-preview.svg?style=flat-square)](https://github.com/lanxuexing/ng-images-preview)
 [![GitHub Stars](https://img.shields.io/github/stars/lanxuexing/ng-images-preview.svg?style=flat-square)](https://github.com/lanxuexing/ng-images-preview/stargazers)
 [![CI/CD](https://github.com/lanxuexing/ng-images-preview/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/lanxuexing/ng-images-preview/actions)
-[![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=flat-square&logo=angular&logoColor=white)](https://angular.dev)
+[![Angular](https://img.shields.io/badge/Angular-18%20%7C%2019%20%7C%2020%20%7C%2021%20%7C%2022+-DD0031.svg?style=flat-square&logo=angular&logoColor=white)](https://angular.dev)
 [![Signals](https://img.shields.io/badge/Signals-optimized-blue.svg?style=flat-square&logo=dynamic-365&logoColor=white)](https://angular.dev/guide/signals)
 [![Code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
@@ -19,6 +19,15 @@ Angular 18+ 的轻量级、现代化且支持无障碍访问的图片预览库�
 查看组件实际效果：**[https://lanxuexing.github.io/ng-images-preview/](https://lanxuexing.github.io/ng-images-preview/)**
 
 </div>
+
+---
+
+## 📋 Angular 版本兼容性说明
+
+| `ng-images-preview` 版本 | 支持的 Angular 版本 | 状态 |
+| :--- | :--- | :--- |
+| **`v2.x.x`** | **Angular 18.x / 19.x / 20.x / 21.x / 22.x 及更高版本** | ✅ 主力版本 (推荐) |
+| `v1.x.x` | Angular 17.3+ | 📜 维护状态 |
 
 ---
 
