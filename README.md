@@ -56,29 +56,6 @@ npm install ng-images-preview
 
 ## 🚀 Quick Start
 
-### ⚠️ Prerequisite: Enable Animations
-
-This library relies on Angular animations. You must enable them in your application.
-
-**Standalone (app.config.ts):**
-```typescript
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-export const appConfig: ApplicationConfig = {
-  providers: [provideAnimations()]
-};
-```
-
-**NgModule (app.module.ts):**
-```typescript
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-@NgModule({
-  imports: [BrowserAnimationsModule]
-})
-export class AppModule { }
-```
-
 Register the library in your standalone component or module.
 
 #### Standalone (Recommended)

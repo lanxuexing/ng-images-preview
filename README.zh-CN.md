@@ -56,29 +56,6 @@ npm install ng-images-preview
 
 ## 🚀 快速开始
 
-### ⚠️ 前置条件: 启用动画
-
-本库依赖 Angular Animations。请确保你的应用已启用动画支持。
-
-**Standalone 应用 (app.config.ts):**
-```typescript
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-export const appConfig: ApplicationConfig = {
-  providers: [provideAnimations()]
-};
-```
-
-**NgModule 应用 (app.module.ts):**
-```typescript
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-@NgModule({
-  imports: [BrowserAnimationsModule]
-})
-export class AppModule { }
-```
-
 在你的独立组件 (standalone component) 或模块中注册该库。
 
 #### Standalone 模式 (推荐)

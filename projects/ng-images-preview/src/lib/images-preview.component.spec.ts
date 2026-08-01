@@ -1,7 +1,6 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImagesPreviewComponent } from './images-preview.component';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 console.log('Spec file evaluated');
@@ -13,7 +12,6 @@ describe('ImagesPreviewComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ImagesPreviewComponent],
-            providers: [provideNoopAnimations()]
         })
             .compileComponents();
 

@@ -12,9 +12,7 @@ import {
     effect,
     PLATFORM_ID,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { PREVIEW_ICONS } from './icons';
 import { OverlayManager } from './utils/overlay-manager';
@@ -127,7 +125,7 @@ interface ImageBufferItem {
     template: `
     <div
       class="overlay"
-      [@fadeInOut]
+      [class.closing]="isClosing()"
       (click)="close()"
       (keydown)="onOverlayKey($event)"
       tabindex="0"
@@ -311,17 +309,6 @@ interface ImageBufferItem {
     </div>
   `,
     styleUrls: ['./images-preview.component.css'],
-    animations: [
-        trigger('fadeInOut', [
-            transition(':enter', [
-                style({ opacity: 0 }),
-                animate('200ms ease-out', style({ opacity: 1 })),
-            ]),
-            transition(':leave', [
-                animate('300ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0 })),
-            ]),
-        ]),
-    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         '(document:mouseup)': 'onMouseUp()',
@@ -333,7 +320,7 @@ interface ImageBufferItem {
     },
 })
 export class ImagesPreviewComponent {
-    private isClosing = signal(false);
+    isClosing = signal(false);
     /**
      * The image source to display.
      * @required
