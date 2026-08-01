@@ -36,7 +36,7 @@ import { ImagesGalleryComponent, ImagesPreviewService } from 'ng-images-preview'
 
         <ng-images-gallery [images]="galleryImages" [columns]="3" gap="12px"></ng-images-gallery>
 
-        <pre><code>&lt;ng-images-gallery [images]="galleryImages" [columns]="3" gap="12px" /&gt;</code></pre>
+        <pre><code>&lt;<span class="hl-tag">ng-images-gallery</span> <span class="hl-attr">[images]</span>="galleryImages" <span class="hl-attr">[columns]</span>="3" <span class="hl-attr">gap</span>=<span class="hl-str">"12px"</span> /&gt;</code></pre>
       </section>
 
       <!-- Section 2: Programmatic Service API -->
@@ -60,13 +60,13 @@ import { ImagesGalleryComponent, ImagesPreviewService } from 'ng-images-preview'
           </button>
         </div>
 
-        <pre><code>import {{ '{' }} ImagesPreviewService {{ '}' }} from 'ng-images-preview';
+        <pre><code><span class="hl-kw">import</span> {{ '{' }} <span class="hl-title">ImagesPreviewService</span> {{ '}' }} <span class="hl-kw">from</span> <span class="hl-str">'ng-images-preview'</span>;
 
-const service = inject(ImagesPreviewService);
+<span class="hl-kw">const</span> service = <span class="hl-title">inject</span>(ImagesPreviewService);
 
-service.open('high-res.jpg', {{ '{' }}
-  images: ['img1.jpg', 'img2.jpg'],
-  initialIndex: 0
+service.<span class="hl-title">open</span>(<span class="hl-str">'high-res.jpg'</span>, {{ '{' }}
+  <span class="hl-attr">images</span>: [<span class="hl-str">'img1.jpg'</span>, <span class="hl-str">'img2.jpg'</span>],
+  <span class="hl-attr">initialIndex</span>: 0
 {{ '}' }});</code></pre>
       </section>
 

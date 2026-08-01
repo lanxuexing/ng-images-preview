@@ -158,14 +158,14 @@ import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGall
       <!-- Code Snippet -->
       <section class="apple-card p-6 md:p-8 space-y-4">
         <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Quick Setup Code</h3>
-        <pre><code>import {{ '{' }} ImagesPreviewDirective {{ '}' }} from 'ng-images-preview';
+        <pre><code><span class="hl-kw">import</span> {{ '{' }} <span class="hl-title">ImagesPreviewDirective</span> {{ '}' }} <span class="hl-kw">from</span> <span class="hl-str">'ng-images-preview'</span>;
 
-&#64;Component({{ '{' }}
-  standalone: true,
-  imports: [ImagesPreviewDirective],
-  template: \`&lt;img [src]="imgUrl" [ngImagesPreview]="highResUrl" /&gt;\`
+<span class="hl-dec">&#64;Component</span>({{ '{' }}
+  <span class="hl-attr">standalone</span>: <span class="hl-kw">true</span>,
+  <span class="hl-attr">imports</span>: [<span class="hl-title">ImagesPreviewDirective</span>],
+  <span class="hl-attr">template</span>: <span class="hl-str">\`&lt;<span class="hl-tag">img</span> <span class="hl-attr">[src]</span>="imgUrl" <span class="hl-attr">[ngImagesPreview]</span>="highResUrl" /&gt;\`</span>
 {{ '}' }})
-export class AppComponent {{ '{' }} {{ '}' }}</code></pre>
+<span class="hl-kw">export</span> <span class="hl-kw">class</span> <span class="hl-title">AppComponent</span> {{ '{' }} {{ '}' }}</code></pre>
       </section>
     </div>
   `,

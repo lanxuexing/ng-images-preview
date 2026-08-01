@@ -107,14 +107,14 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
       <!-- Implementation Code Block -->
       <section class="apple-card p-6 md:p-8 space-y-4">
         <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Code Implementation</h3>
-        <pre><code>&lt;ng-template #myPreview let-state let-actions="actions"&gt;
-  &lt;div class="my-custom-overlay"&gt;
-    &lt;img [src]="state.src" [style.transform]="'scale(' + state.scale + ')'"&gt;
-    &lt;button (click)="actions.close()"&gt;Close&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/ng-template&gt;
+        <pre><code>&lt;<span class="hl-tag">ng-template</span> <span class="hl-attr">#myPreview</span> <span class="hl-attr">let-state</span> <span class="hl-attr">let-actions</span>="actions"&gt;
+  &lt;<span class="hl-tag">div</span> <span class="hl-attr">class</span>=<span class="hl-str">"my-custom-overlay"</span>&gt;
+    &lt;<span class="hl-tag">img</span> <span class="hl-attr">[src]</span>="state.src" <span class="hl-attr">[style.transform]</span>="<span class="hl-str">'scale('</span> + state.scale + <span class="hl-str">')'</span>"&gt;
+    &lt;<span class="hl-tag">button</span> <span class="hl-attr">(click)</span>="actions.close()"&gt;Close&lt;/<span class="hl-tag">button</span>&gt;
+  &lt;/<span class="hl-tag">div</span>&gt;
+&lt;/<span class="hl-tag">ng-template</span>&gt;
 
-&lt;img [ngImagesPreview]="fullResUrl" [previewTemplate]="myPreview" src="thumb.jpg" /&gt;</code></pre>
+&lt;<span class="hl-tag">img</span> <span class="hl-attr">[ngImagesPreview]</span>="fullResUrl" <span class="hl-attr">[previewTemplate]</span>="myPreview" <span class="hl-attr">src</span>=<span class="hl-str">"thumb.jpg"</span> /&gt;</code></pre>
       </section>
     </div>
   `
