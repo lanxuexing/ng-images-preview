@@ -148,11 +148,11 @@ export class AdvancedFeaturesComponent implements AfterViewInit {
   }
 
   openViaService() {
-    this.service.open('https://picsum.photos/id/30/1200/800', {
+    this.service.open('https://picsum.photos/id/1018/1200/800', {
       images: [
-        'https://picsum.photos/id/30/1200/800',
-        'https://picsum.photos/id/31/1200/800',
-        'https://picsum.photos/id/32/1200/800'
+        'https://picsum.photos/id/1018/1200/800',
+        'https://picsum.photos/id/1025/1200/800',
+        'https://picsum.photos/id/1039/1200/800'
       ],
       showThumbnails: true
     });
