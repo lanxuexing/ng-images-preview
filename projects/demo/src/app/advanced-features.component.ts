@@ -148,11 +148,11 @@ export class AdvancedFeaturesComponent implements AfterViewInit {
   }
 
   openViaService() {
-    this.service.open('https://picsum.photos/id/30/1200/800', {
+    this.service.open('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=3840&q=85', {
       images: [
-        'https://picsum.photos/id/30/1200/800',
-        'https://picsum.photos/id/29/1200/800',
-        'https://picsum.photos/id/32/1200/800'
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=3840&q=85',
+        'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?auto=format&fit=crop&w=3840&q=85',
+        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=3840&q=85'
       ],
       showThumbnails: true
     });
