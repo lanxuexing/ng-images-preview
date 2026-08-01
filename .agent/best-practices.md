@@ -68,3 +68,10 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - **Vanilla CSS**: Prefer CSS variables (`--var`) over inline styles for library theming.
 - **Dependency Injection**: Use `inject()` for all dependency injection. Avoid constructor injection.
 - **Host Bindings**: Use the `host` property in `@Component` or `@Directive` metadata instead of `@HostListener` or `@HostBinding` decorators.
+
+## Apple Design & Performance Guidelines
+See full specification in [.agent/apple-design.md](file:///Users/apple/Documents/Project/ng-images-preview/.agent/apple-design.md).
+- **Latency Elimination**: Instant press feedback on `:active` (`transform: scale(0.97)`).
+- **Fluid Motion**: Use Apple spring curves (`cubic-bezier(0.16, 1, 0.3, 1)`) and interruptible transitions.
+- **Visual Style**: SF Pro typography stack, Bento Grid structures, lightweight glassmorphism (`backdrop-filter: blur(16px)`).
+- **Hardware Thermal Efficiency**: Restrict animations strictly to GPU compositor properties (`transform` & `opacity` only) to avoid CPU/GPU overheating.
