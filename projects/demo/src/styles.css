@@ -3,20 +3,148 @@
 /* Force dark mode to use the .dark class instead of system preference only */
 @variant dark (&:where(.dark, .dark *));
 
-/* Ensure browser UI and scrollbars react to the theme */
+/* System Typography & Theme Foundations */
 :root {
-    color-scheme: light;
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .dark {
-    color-scheme: dark;
+  color-scheme: dark;
 }
 
-/* Syntax highlighting for code blocks */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark body {
+  background-color: #000000;
+  color: #f5f5f7;
+}
+
+/* Apple Glassmorphism Utility (Lightweight backdrop-filter for high performance) */
+.apple-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.04);
+}
+
+.dark .apple-glass {
+  background: rgba(22, 22, 23, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Apple Floating Pill Nav */
+.apple-nav-pill {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.dark .apple-nav-pill {
+  background: rgba(28, 28, 30, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Apple Card & Hover Effects (GPU Composited: transform & opacity only) */
+.apple-card {
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.dark .apple-card {
+  background: #1c1c1e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.apple-card:hover {
+  transform: scale(1.015);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+}
+
+.dark .apple-card:hover {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+/* Apple Latency-Free Active Press Feedback */
+.apple-press {
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-press:active {
+  transform: scale(0.97);
+}
+
+/* Apple Badge */
+.apple-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: rgba(0, 113, 227, 0.1);
+  color: #0071e3;
+  border: 1px solid rgba(0, 113, 227, 0.2);
+}
+
+.dark .apple-badge {
+  background: rgba(10, 132, 255, 0.15);
+  color: #0a84ff;
+  border: 1px solid rgba(10, 132, 255, 0.3);
+}
+
+/* Syntax Highlighting */
 pre {
-    background: #1e1e1e;
-    color: #d4d4d4;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
+  background: #161618 !important;
+  color: #e3e3e3 !important;
+  padding: 1.25rem !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  overflow-x: auto;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }

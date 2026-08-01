@@ -1,143 +1,100 @@
-<div
-  class="flex h-screen bg-gradient-to-br from-slate-50 to-gray-200 dark:from-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-200 font-sans selection:bg-indigo-500/20">
-  <!-- Sidebar (Desktop) -->
-  <aside
-    class="w-72 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl flex-col shadow-[0_0_40px_-10px_rgba(0,0,0,0.05)] border-r border-white/50 dark:border-slate-800/50 fixed h-full z-20 transition-all duration-300 hidden md:flex">
-    <div class="p-8">
-      <h1
-        class="text-2xl font-extrabold bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-500 bg-clip-text text-transparent tracking-tight drop-shadow-sm">
-        ng-images-preview
-      </h1>
-      <p class="text-xs font-medium text-slate-400 mt-2 uppercase tracking-widest pl-0.5">
-        Angular 18+ Library
-      </p>
+<div class="min-h-screen bg-[#f5f5f7] dark:bg-[#000000] text-[#1d1d1f] dark:text-[#f5f5f7] selection:bg-[#0071e3]/20 font-sans transition-colors duration-300">
+  
+  <!-- Apple Top Floating Navigation Bar -->
+  <header class="fixed top-4 left-0 right-0 z-50 px-4 md:px-8 max-w-6xl mx-auto">
+    <div class="apple-nav-pill rounded-full px-4 py-2.5 flex items-center justify-between transition-all duration-300">
+      
+      <!-- Brand & Version -->
+      <div class="flex items-center gap-3 pl-2">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#0071e3] to-[#40c4ff] flex items-center justify-center shadow-sm">
+          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <span class="font-semibold text-sm md:text-base tracking-tight text-[#1d1d1f] dark:text-white">
+            ng-images-preview
+          </span>
+          <span class="apple-badge ml-2 text-[10px] py-0.5 px-2">v2.1.1</span>
+        </div>
+      </div>
+
+      <!-- Center Desktop Segmented Nav Tabs -->
+      <nav class="hidden md:flex items-center bg-black/5 dark:bg-white/10 p-1 rounded-full text-xs font-medium backdrop-blur-md">
+        <a routerLink="/basic"
+           routerLinkActive="bg-white dark:bg-[#2c2c2e] text-[#0071e3] dark:text-[#0a84ff] shadow-sm font-semibold"
+           class="px-4 py-1.5 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6] hover:text-[#1d1d1f] dark:hover:text-white">
+          Basic Usage
+        </a>
+        <a routerLink="/custom"
+           routerLinkActive="bg-white dark:bg-[#2c2c2e] text-[#0071e3] dark:text-[#0a84ff] shadow-sm font-semibold"
+           class="px-4 py-1.5 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6] hover:text-[#1d1d1f] dark:hover:text-white">
+          Custom Template
+        </a>
+        <a routerLink="/advanced"
+           routerLinkActive="bg-white dark:bg-[#2c2c2e] text-[#0071e3] dark:text-[#0a84ff] shadow-sm font-semibold"
+           class="px-4 py-1.5 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6] hover:text-[#1d1d1f] dark:hover:text-white">
+          Advanced Controls
+        </a>
+      </nav>
+
+      <!-- Right Controls: Theme Toggle & GitHub Link -->
+      <div class="flex items-center gap-2">
+        <button (click)="toggleTheme()"
+                aria-label="Toggle theme"
+                class="apple-press p-2 rounded-full text-[#6e6e73] dark:text-[#a1a1a6] hover:text-[#1d1d1f] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+          @if (mode() === 'system') {
+            <svg class="w-4 h-4 text-[#0071e3] dark:text-[#0a84ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          } @else if (mode() === 'light') {
+            <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          } @else {
+            <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          }
+        </button>
+
+        <a href="https://github.com/lanxuexing/ng-images-preview"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="GitHub Repository"
+           class="apple-press bg-[#1d1d1f] dark:bg-white text-white dark:text-[#1d1d1f] px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span class="hidden sm:inline">GitHub</span>
+        </a>
+      </div>
     </div>
+  </header>
 
-    <nav class="flex-1 px-4 space-y-2 overflow-y-auto mt-4">
-      <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Showcase</p>
-
+  <!-- Mobile Bottom Floating Navigation -->
+  <div class="md:hidden fixed bottom-4 left-4 right-4 z-50">
+    <nav class="apple-nav-pill rounded-full p-1.5 flex items-center justify-around text-xs font-medium shadow-xl">
       <a routerLink="/basic"
-        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
-        <span
-          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
-          routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
-        Basic Usage
+         routerLinkActive="bg-[#0071e3] text-white shadow-sm font-semibold"
+         class="px-4 py-2 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6]">
+        Basic
       </a>
-
       <a routerLink="/custom"
-        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
-        <span
-          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
-          routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
-        Custom Template
+         routerLinkActive="bg-[#0071e3] text-white shadow-sm font-semibold"
+         class="px-4 py-2 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6]">
+        Custom
       </a>
-
       <a routerLink="/advanced"
-        routerLinkActive="bg-white/80 dark:bg-slate-800/80 shadow-sm text-indigo-600 dark:text-indigo-400 translate-x-1"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-800/50 hover:text-indigo-600 dark:hover:text-indigo-400 group hover:translate-x-1">
-        <span
-          class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700 mr-3 group-hover:bg-indigo-400 transition-colors"
-          routerLinkActive="bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span>
+         routerLinkActive="bg-[#0071e3] text-white shadow-sm font-semibold"
+         class="px-4 py-2 rounded-full transition-all duration-200 apple-press text-[#6e6e73] dark:text-[#a1a1a6]">
         Advanced
       </a>
     </nav>
+  </div>
 
-    <!-- Theme Toggle (Desktop) -->
-    <div class="px-8 py-4 border-t border-slate-100 dark:border-slate-800">
-      <button (click)="toggleTheme()"
-        class="flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 group">
-        <span class="flex items-center">
-          @if (mode() === 'system') {
-          <svg class="w-5 h-5 mr-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-          Follow System
-          } @else if (mode() === 'light') {
-          <svg class="w-5 h-5 mr-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          Light Mode
-          } @else {
-          <svg class="w-5 h-5 mr-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-          </svg>
-          Dark Mode
-          }
-        </span>
-      </button>
-    </div>
-
-    <div class="p-6">
-      <a href="https://github.com/lanxuexing/ng-images-preview" target="_blank"
-        class="flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill-rule="evenodd"
-            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-            clip-rule="evenodd" />
-        </svg>
-        GitHub
-      </a>
-    </div>
-  </aside>
-
-  <!-- Bottom Nav (Mobile) -->
-  <nav
-    class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-30 flex items-center justify-around px-4 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
-    <a routerLink="/basic"
-      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
-      <span class="text-xs mt-1">Basic</span>
-    </a>
-    <a routerLink="/custom"
-      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
-      <span class="text-xs mt-1">Custom</span>
-    </a>
-    <a routerLink="/advanced"
-      routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50/50 dark:bg-indigo-900/20"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors rounded-lg">
-      <span class="text-xs mt-1">Advanced</span>
-    </a>
-    <button (click)="toggleTheme()"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-      @if (mode() === 'system') {
-      <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9.75 17L9 21h6l-.75-4M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-      } @else if (mode() === 'light') {
-      <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      } @else {
-      <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
-      }
-      <span class="text-[10px] mt-1 uppercase font-bold tracking-tighter">{{ mode() }}</span>
-    </button>
-    <a href="https://github.com/lanxuexing/ng-images-preview" target="_blank"
-      class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-indigo-600 transition-colors">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd"
-          d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-          clip-rule="evenodd" />
-      </svg>
-      <span class="text-xs mt-1">GitHub</span>
-    </a>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="flex-1 ml-0 md:ml-72 p-4 md:p-10 overflow-y-auto h-full scroll-smooth pb-24 md:pb-10">
-    <div class="max-w-4xl mx-auto">
-      <router-outlet></router-outlet>
-    </div>
+  <!-- Main View Container -->
+  <main class="pt-24 pb-20 px-4 md:px-8 max-w-6xl mx-auto">
+    <router-outlet></router-outlet>
   </main>
 </div>

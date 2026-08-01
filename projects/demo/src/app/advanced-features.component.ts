@@ -1,167 +1,168 @@
-
-import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImagesGalleryComponent, ImagesPreviewService } from 'ng-images-preview';
 
 @Component({
-    selector: 'app-advanced-features',
-    standalone: true,
-    imports: [CommonModule, ImagesGalleryComponent],
-    template: `
-    <div class="space-y-6 animate-in fade-in duration-500">
-      <header class="mb-10">
-        <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Advanced Features <span class="text-indigo-500 text-lg align-top">v2.0</span></h2>
-        <p class="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-          Explore the new power user features: Standalone Gallery, Programmatic API, and Mixed Content Types.
+  selector: 'app-advanced-features',
+  standalone: true,
+  imports: [CommonModule, ImagesGalleryComponent],
+  template: `
+    <div class="space-y-10 animate-in fade-in duration-500 max-w-4xl mx-auto">
+      
+      <!-- Apple Section Header -->
+      <header class="space-y-3">
+        <div class="inline-flex items-center gap-2 apple-badge">
+          <span>Advanced API</span>
+          <span class="w-1 h-1 rounded-full bg-current"></span>
+          <span>Power Features</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+          Advanced Capabilities
+        </h1>
+        <p class="text-base md:text-lg text-[#86868b] dark:text-[#a1a1a6] leading-relaxed max-w-2xl">
+          Explore programmatic service invocation, standalone gallery grid components, and mixed hybrid media slides.
         </p>
       </header>
 
-      <!-- 1. The Gallery Component -->
-      <section class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-8 mb-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                    Component: &lt;ng-images-gallery&gt;
-                </h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Ready-to-use responsive grid. Just pass an array of images.</p>
-            </div>
-            <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded text-xs font-bold uppercase tracking-wider">New</span>
+      <!-- Section 1: Standalone Gallery Grid -->
+      <section class="apple-card p-6 md:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Standalone Grid Component</h2>
+            <p class="text-sm text-[#86868b] dark:text-[#a1a1a6] mt-1">&lt;ng-images-gallery&gt; responsive layout component.</p>
+          </div>
+          <span class="apple-badge">Component</span>
         </div>
 
-        <ng-images-gallery 
-            [images]="galleryImages" 
-            [columns]="3" 
-            gap="12px">
-        </ng-images-gallery>
+        <ng-images-gallery [images]="galleryImages" [columns]="3" gap="12px"></ng-images-gallery>
 
-        <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-xs font-mono text-slate-500 dark:text-slate-400 overflow-x-auto">
-            &lt;ng-images-gallery [images]="['...']" [columns]="3" gap="12px"&gt;&lt;/ng-images-gallery&gt;
-        </div>
+        <pre><code>&lt;ng-images-gallery [images]="galleryImages" [columns]="3" gap="12px" /&gt;</code></pre>
       </section>
 
-      <!-- 2. Service API -->
-      <section class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-8 mb-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-                    Service API
-                </h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Trigger previews programmatically from any event or button.</p>
-            </div>
-            <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded text-xs font-bold uppercase tracking-wider">New</span>
+      <!-- Section 2: Programmatic Service API -->
+      <section class="apple-card p-6 md:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Programmatic Service API</h2>
+            <p class="text-sm text-[#86868b] dark:text-[#a1a1a6] mt-1">Open image overlays programmatically from TypeScript without directive tags.</p>
+          </div>
+          <span class="apple-badge">Service</span>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 items-center justify-center p-8 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-2xl border border-indigo-100 dark:border-indigo-900/20 dashed">
-            <button 
-                (click)="openViaService()"
-                class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 flex items-center gap-2"
-            >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Launch Preview via Service
-            </button>
-            <p class="text-sm text-slate-500 dark:text-slate-400 italic">No &lt;img&gt; tag required in template!</p>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10">
+          <div>
+            <h4 class="text-base font-semibold text-[#1d1d1f] dark:text-white">Trigger Service Launch</h4>
+            <p class="text-xs text-[#86868b] dark:text-[#a1a1a6] mt-0.5">Calls <code class="font-mono">ImagesPreviewService.open(src, config)</code></p>
+          </div>
+          <button (click)="openViaService()"
+                  class="apple-press bg-[#0071e3] hover:bg-[#0077ed] text-white px-5 py-2.5 rounded-full font-medium text-xs shadow-md transition-all">
+            Launch Service Preview
+          </button>
         </div>
+
+        <pre><code>import {{ '{' }} ImagesPreviewService {{ '}' }} from 'ng-images-preview';
+
+const service = inject(ImagesPreviewService);
+
+service.open('high-res.jpg', {{ '{' }}
+  images: ['img1.jpg', 'img2.jpg'],
+  initialIndex: 0
+{{ '}' }});</code></pre>
       </section>
 
-      <!-- 3. Mixed Content -->
-      <section class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-8">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                    Mixed Content (Hybrid)
-                </h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Mix Images with Custom Templates (Video, PDF, interactive components) in the same gallery.</p>
-            </div>
-            <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded text-xs font-bold uppercase tracking-wider">New</span>
+      <!-- Section 3: Mixed Content / Hybrid Slides -->
+      <section class="apple-card p-6 md:p-8 space-y-6">
+        <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Mixed Hybrid Media Slides</h2>
+            <p class="text-sm text-[#86868b] dark:text-[#a1a1a6] mt-1">Mix images with Angular TemplateRefs (video players, interactive cards) in a single gallery stream.</p>
+          </div>
+          <span class="apple-badge">Hybrid</span>
         </div>
 
         <div class="grid grid-cols-3 gap-4">
-            <!-- Thumbnails representing the mixed content -->
-            <div (click)="openMixedContent(0)" class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                <img [src]="mixedImages[0]" class="w-full h-full object-cover">
+          <div (click)="openMixedContent(0)" class="aspect-square rounded-xl overflow-hidden cursor-pointer apple-card apple-press relative">
+            <img [src]="mixedImages[0]" class="w-full h-full object-cover" alt="Image slide 1">
+            <span class="absolute bottom-2 left-2 text-[10px] font-bold bg-black/60 text-white px-2 py-0.5 rounded-full backdrop-blur-md">Image</span>
+          </div>
+
+          <div (click)="openMixedContent(1)" class="aspect-square rounded-xl overflow-hidden cursor-pointer apple-card apple-press relative bg-black/80 flex items-center justify-center">
+            <div class="text-center p-2">
+              <svg class="w-8 h-8 text-[#0071e3] mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="text-[10px] font-bold text-white uppercase tracking-wider">Template Slide</span>
             </div>
-            <div (click)="openMixedContent(1)" class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative group">
-                <!-- Video Thumbnail Placeholder -->
-                <div class="absolute inset-0 flex items-center justify-center bg-black/50 text-white font-bold">
-                    <svg class="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </div>
-                <img src="https://picsum.photos/id/40/300/300" class="w-full h-full object-cover grayscale opacity-50">
-                <span class="absolute bottom-2 left-2 text-[10px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded">TEMPLATE</span>
-            </div>
-            <div (click)="openMixedContent(2)" class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                <img [src]="mixedImages[2]" class="w-full h-full object-cover">
-            </div>
+          </div>
+
+          <div (click)="openMixedContent(2)" class="aspect-square rounded-xl overflow-hidden cursor-pointer apple-card apple-press relative">
+            <img [src]="mixedImages[2]" class="w-full h-full object-cover" alt="Image slide 2">
+            <span class="absolute bottom-2 left-2 text-[10px] font-bold bg-black/60 text-white px-2 py-0.5 rounded-full backdrop-blur-md">Image</span>
+          </div>
         </div>
       </section>
 
       <!-- Template Definition for Mixed Content -->
-      <ng-template #videoSlide let-item>
-        <div class="w-full h-full flex items-center justify-center bg-black p-4 md:p-20" (click)="$event.stopPropagation()">
-            <div class="bg-slate-800 text-white p-8 rounded-2xl max-w-lg text-center shadow-2xl border border-slate-700">
-                <div class="mb-4 flex justify-center text-indigo-400">
-                    <svg class="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <h2 class="text-2xl font-bold mb-2">Custom Template Slide</h2>
-                <p class="text-slate-400 mb-6">This is not an image! It's an Angular 'TemplateRef' rendered inside the gallery. You can put anything here: Video Player, PDF Viewer, Form, etc.</p>
-                <div class="flex gap-4 justify-center">
-                    <button class="px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">Play Video</button>
-                    <button class="px-4 py-2 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors">More Info</button>
-                </div>
+      <ng-template #videoSlide>
+        <div class="w-full h-full flex items-center justify-center bg-black/90 p-6" (click)="$event.stopPropagation()">
+          <div class="apple-card p-8 max-w-md text-center space-y-4">
+            <div class="w-12 h-12 rounded-full bg-[#0071e3]/10 text-[#0071e3] flex items-center justify-center mx-auto">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
+            <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white">Custom Angular Template Slide</h3>
+            <p class="text-xs text-[#86868b] dark:text-[#a1a1a6] leading-relaxed">
+              Embed interactive video players, PDF viewers, or custom Angular components seamlessly within your image gallery navigation stream.
+            </p>
+          </div>
         </div>
       </ng-template>
-
     </div>
   `
 })
-export class AdvancedFeaturesComponent {
-    private service = inject(ImagesPreviewService);
+export class AdvancedFeaturesComponent implements AfterViewInit {
+  private service = inject(ImagesPreviewService);
 
-    @ViewChild('videoSlide') videoSlide!: TemplateRef<any>;
+  @ViewChild('videoSlide') videoSlide!: TemplateRef<any>;
 
-    galleryImages = [
-        'https://picsum.photos/id/10/800/600',
-        'https://picsum.photos/id/11/800/600',
-        'https://picsum.photos/id/12/800/600',
-        'https://picsum.photos/id/13/800/600',
-        'https://picsum.photos/id/14/800/600',
-        'https://picsum.photos/id/15/800/600',
-    ];
+  galleryImages = [
+    'https://picsum.photos/id/10/800/600',
+    'https://picsum.photos/id/11/800/600',
+    'https://picsum.photos/id/12/800/600',
+    'https://picsum.photos/id/13/800/600',
+    'https://picsum.photos/id/14/800/600',
+    'https://picsum.photos/id/15/800/600',
+  ];
 
-    mixedImages: any[] = [];
+  mixedImages: any[] = [
+    'https://picsum.photos/id/20/1200/800',
+    null,
+    'https://picsum.photos/id/22/1200/800'
+  ];
 
-    // Initialize mixed content after view init so we can access the template
-    ngAfterViewInit() {
-        this.mixedImages = [
-            'https://picsum.photos/id/20/1200/800',
-            this.videoSlide, // The template!
-            'https://picsum.photos/id/22/1200/800'
-        ];
-    }
+  ngAfterViewInit() {
+    this.mixedImages[1] = this.videoSlide;
+  }
 
-    openViaService() {
-        this.service.open('https://picsum.photos/id/30/1200/800', {
-            images: [
-                'https://picsum.photos/id/30/1200/800',
-                'https://picsum.photos/id/31/1200/800',
-                'https://picsum.photos/id/32/1200/800'
-            ],
-            showThumbnails: true
-        });
-    }
+  openViaService() {
+    this.service.open('https://picsum.photos/id/30/1200/800', {
+      images: [
+        'https://picsum.photos/id/30/1200/800',
+        'https://picsum.photos/id/31/1200/800',
+        'https://picsum.photos/id/32/1200/800'
+      ],
+      showThumbnails: true
+    });
+  }
 
-    openMixedContent(index: number) {
-        this.service.open(this.mixedImages[index], {
-            images: this.mixedImages,
-            initialIndex: index,
-            showThumbnails: true, // Auto handles templates in thumbnails (shows placeholder or nothing, check implementation)
-            // Actually, my current thumbnail impl tries to render `img [src]="img"`.
-            // If `img` is a TemplateRef, [src] will [Object object].
-            // I should probably fix the thumbnail strip in the component to handle templates too?
-            // Wait, let's check `ImagesPreviewComponent` thumbnail logic.
-        });
-    }
+  openMixedContent(index: number) {
+    this.service.open(this.mixedImages[index], {
+      images: this.mixedImages,
+      initialIndex: index,
+      showThumbnails: true
+    });
+  }
 }

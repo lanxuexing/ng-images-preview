@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImagesPreviewDirective } from 'ng-images-preview';
@@ -8,140 +7,114 @@ import { ImagesPreviewDirective } from 'ng-images-preview';
   standalone: true,
   imports: [CommonModule, ImagesPreviewDirective],
   template: `
-    <div class="space-y-6 animate-in fade-in duration-500">
-      <header class="mb-10">
-        <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">Custom Template</h2>
-        <p class="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-          Take full control of the preview UI by providing a
-          <code
-            class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded px-1.5 py-0.5 text-indigo-600 dark:text-indigo-400 text-sm font-mono font-medium"
-            >ng-template</code
-          >.
+    <div class="space-y-10 animate-in fade-in duration-500 max-w-4xl mx-auto">
+      <!-- Apple Section Header -->
+      <header class="space-y-3">
+        <div class="inline-flex items-center gap-2 apple-badge">
+          <span>Template API</span>
+          <span class="w-1 h-1 rounded-full bg-current"></span>
+          <span>Full UI Control</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-extrabold text-[#1d1d1f] dark:text-white tracking-tight">
+          Custom Template Integration
+        </h1>
+        <p class="text-base md:text-lg text-[#86868b] dark:text-[#a1a1a6] leading-relaxed max-w-2xl">
+          Take total control over the overlay rendering by supplying a custom <code class="px-2 py-0.5 rounded bg-black/5 dark:bg-white/10 font-mono text-xs text-[#0071e3] dark:text-[#0a84ff]">ng-template</code> context.
         </p>
       </header>
 
-      <section
-        class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-slate-800/50 p-5 md:p-12 mb-12"
-      >
-        <div class="flex items-center justify-between mb-8">
+      <!-- Interactive Preview Card -->
+      <section class="apple-card p-6 md:p-10 space-y-8">
+        <div class="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-6">
           <div>
-            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Custom UI Integration</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Preview with completely custom controls and layout</p>
+            <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Bespoke Overlay Demo</h3>
+            <p class="text-sm text-[#86868b] dark:text-[#a1a1a6] mt-1">Click the card below to trigger your customized overlay.</p>
           </div>
-          <span
-            class="px-3 py-1 bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 rounded-full text-xs font-bold uppercase tracking-wider"
-            >Advanced</span
-          >
+          <span class="apple-badge">Interactive</span>
         </div>
 
         <div class="flex justify-center">
-          <div
-            class="group relative max-w-sm rounded-2xl overflow-hidden cursor-pointer shadow-2xl shadow-slate-200 dark:shadow-none hover:shadow-3xl hover:shadow-indigo-500/10 transition-all duration-500 bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700"
-            ngImagesPreview="https://picsum.photos/id/25/5000/3333"
-            [previewTemplate]="myCustomPreview"
-          >
+          <div class="group relative max-w-md rounded-2xl overflow-hidden cursor-pointer apple-card apple-press border border-black/5 dark:border-white/10"
+               ngImagesPreview="https://picsum.photos/id/25/5000/3333"
+               [previewTemplate]="myCustomPreview">
             <div class="relative overflow-hidden aspect-[4/3]">
-              <img
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                src="https://picsum.photos/id/25/800/600"
-                alt="iPod"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8"
-              >
-                <span
-                  class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-lg hover:bg-white/20 transition-colors"
-                  >Launch Custom UI</span
-                >
+              <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                   src="https://picsum.photos/id/25/800/600"
+                   alt="iPod" />
+              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <span class="bg-white/90 text-[#1d1d1f] px-5 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-md">
+                  Launch Bespoke UI
+                </span>
               </div>
             </div>
 
-            <div class="p-8">
-              <h5
-                class="mb-3 text-2xl font-bold tracking-tight text-slate-900 dark:text-white"
-              >
-                Custom Interaction
-              </h5>
-              <p class="font-normal text-slate-500 dark:text-slate-400 leading-relaxed">
-                Click the image above to experience a bespoke preview interface implemented via the <span class="text-indigo-600 dark:text-indigo-400 font-medium">Template API</span>.
+            <div class="p-6 space-y-2">
+              <h4 class="text-lg font-bold text-[#1d1d1f] dark:text-white tracking-tight">
+                Custom Template Preview
+              </h4>
+              <p class="text-xs text-[#86868b] dark:text-[#a1a1a6] leading-relaxed">
+                Render custom status headers, bespoke zoom controls, or integrated action toolbars directly inside Angular <code class="font-mono">ng-template</code>.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Custom Template Definition -->
+      <!-- Bespoke Template Definition -->
       <ng-template #myCustomPreview let-state let-actions="actions">
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors duration-300">
-            
-            <!-- Custom Header -->
-            <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-10" 
-                 (click)="$event.stopPropagation()" 
-                 (keydown.enter)="$event.stopPropagation()"
-                 tabindex="-1">
-                <div class="bg-gray-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-mono text-gray-600 dark:text-slate-400 transition-colors">
-                    Zoom: {{ (state.scale * 100).toFixed(0) }}% | Rotation: {{ state.rotate }}°
-                </div>
-                <button (click)="actions.close()" class="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-800/50 p-2 rounded-full transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl transition-colors duration-300">
+          
+          <!-- Top Floating Glass Info Header -->
+          <div class="absolute top-6 left-6 right-6 flex justify-between items-center z-10"
+               (click)="$event.stopPropagation()"
+               (keydown.enter)="$event.stopPropagation()"
+               tabindex="-1">
+            <div class="apple-glass px-4 py-1.5 rounded-full text-xs font-mono text-white/90">
+              Zoom: {{ (state.scale * 100).toFixed(0) }}% | Rotate: {{ state.rotate }}°
             </div>
+            <button (click)="actions.close()"
+                    class="apple-press bg-red-500/20 hover:bg-red-500/30 text-red-400 p-2.5 rounded-full backdrop-blur-md transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
 
-            <!-- Image with Transforms -->
-             <div class="relative w-full h-full flex items-center justify-center overflow-hidden p-8" (wheel)="actions.zoomIn()">
-                <img 
-                    [src]="state.src" 
-                    class="max-w-full max-h-full object-contain shadow-2xl rounded-lg transition-transform duration-200"
-                    [style.transform]="'scale(' + state.scale + ') rotate(' + state.rotate + 'deg) scaleX(' + (state.flipH ? -1 : 1) + ') scaleY(' + (state.flipV ? -1 : 1) + ')'"
-                    alt="Custom Preview">
-             </div>
+          <!-- Main Image -->
+          <div class="relative w-full h-full flex items-center justify-center overflow-hidden p-8" (wheel)="actions.zoomIn()">
+            <img [src]="state.src"
+                 class="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-transform duration-200"
+                 [style.transform]="'scale(' + state.scale + ') rotate(' + state.rotate + 'deg) scaleX(' + (state.flipH ? -1 : 1) + ') scaleY(' + (state.flipV ? -1 : 1) + ')'"
+                 alt="Custom Preview">
+          </div>
 
-             <!-- Custom Bottom Toolbar -->
-             <div class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-2xl flex items-center gap-4 shadow-xl backdrop-blur-sm" 
-                  (click)="$event.stopPropagation()"
-                  (keydown.enter)="$event.stopPropagation()"
-                  tabindex="-1">
-                <button (click)="actions.zoomOut()" class="hover:text-blue-400 font-bold text-xl px-2">-</button>
-                <div class="w-px h-6 bg-white/20"></div>
-                <button (click)="actions.zoomIn()" class="hover:text-blue-400 font-bold text-xl px-2">+</button>
-                <div class="w-px h-6 bg-white/20"></div>
-                <button (click)="actions.rotateLeft()" class="hover:text-yellow-400 px-2 text-sm uppercase font-bold">Rot L</button>
-                <button (click)="actions.rotateRight()" class="hover:text-yellow-400 px-2 text-sm uppercase font-bold">Rot R</button>
-             </div>
+          <!-- Bottom Control Pill -->
+          <div class="absolute bottom-8 left-1/2 -translate-x-1/2 apple-glass px-6 py-2.5 rounded-full flex items-center gap-5 shadow-2xl"
+               (click)="$event.stopPropagation()"
+               (keydown.enter)="$event.stopPropagation()"
+               tabindex="-1">
+            <button (click)="actions.zoomOut()" class="apple-press text-white/90 hover:text-white font-bold text-lg px-2">-</button>
+            <div class="w-px h-4 bg-white/20"></div>
+            <button (click)="actions.zoomIn()" class="apple-press text-white/90 hover:text-white font-bold text-lg px-2">+</button>
+            <div class="w-px h-4 bg-white/20"></div>
+            <button (click)="actions.rotateLeft()" class="apple-press text-white/80 hover:text-white px-2 text-xs font-semibold uppercase">Rotate L</button>
+            <button (click)="actions.rotateRight()" class="apple-press text-white/80 hover:text-white px-2 text-xs font-semibold uppercase">Rotate R</button>
+          </div>
 
         </div>
       </ng-template>
 
-      <section class="bg-slate-900 dark:bg-black rounded-3xl p-5 md:p-8 shadow-2xl relative overflow-hidden group border border-white/5 dark:border-slate-800">
-        <div
-          class="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity"
-        >
-          <div class="flex space-x-2">
-            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-          </div>
-        </div>
-        <h3
-          class="font-bold text-slate-100 mb-6 text-lg tracking-wide border-b border-slate-700/50 pb-4"
-        >
-          Implementation
-        </h3>
-        <pre class="font-mono text-sm leading-relaxed overflow-x-auto"><code class="language-html"><span class="text-slate-500">&lt;!-- 1. Define Template --&gt;</span>
-<span class="text-violet-400">&lt;ng-template</span> <span class="text-sky-300">#myPreview</span> <span class="text-sky-300">let-state</span> <span class="text-sky-300">let-actions</span>=<span class="text-emerald-300">"actions"</span><span class="text-violet-400">&gt;</span>
-  <span class="text-violet-400">&lt;div</span> <span class="text-sky-300">class</span>=<span class="text-emerald-300">"my-custom-overlay"</span><span class="text-violet-400">&gt;</span>
-    <span class="text-violet-400">&lt;img</span> <span class="text-sky-300">[src]</span>=<span class="text-emerald-300">"state.src"</span> <span class="text-sky-300">[style.transform]</span>=<span class="text-emerald-300">"..."</span><span class="text-violet-400">&gt;</span>
-    <span class="text-violet-400">&lt;button</span> <span class="text-sky-300">(click)</span>=<span class="text-emerald-300">"actions.close()"</span><span class="text-violet-400">&gt;</span>Close<span class="text-violet-400">&lt;/button&gt;</span>
-  <span class="text-violet-400">&lt;/div&gt;</span>
-<span class="text-violet-400">&lt;/ng-template&gt;</span>
+      <!-- Implementation Code Block -->
+      <section class="apple-card p-6 md:p-8 space-y-4">
+        <h3 class="text-xl font-bold text-[#1d1d1f] dark:text-white tracking-tight">Code Implementation</h3>
+        <pre><code>&lt;ng-template #myPreview let-state let-actions="actions"&gt;
+  &lt;div class="my-custom-overlay"&gt;
+    &lt;img [src]="state.src" [style.transform]="'scale(' + state.scale + ')'"&gt;
+    &lt;button (click)="actions.close()"&gt;Close&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/ng-template&gt;
 
-<span class="text-slate-500">&lt;!-- 2. Use Directive --&gt;</span>
-<span class="text-violet-400">&lt;div</span> 
-  <span class="text-sky-300">ngImagesPreview</span>=<span class="text-emerald-300">"full.jpg"</span> 
-  <span class="text-sky-300">[previewTemplate]</span>=<span class="text-emerald-300">"myPreview"</span><span class="text-violet-400">&gt;</span>
-  
-  <span class="text-violet-400">&lt;img</span> <span class="text-sky-300">src</span>=<span class="text-emerald-300">"thumb.jpg"</span><span class="text-violet-400">&gt;</span>
-<span class="text-violet-400">&lt;/div&gt;</span></code></pre>
+&lt;img [ngImagesPreview]="fullResUrl" [previewTemplate]="myPreview" src="thumb.jpg" /&gt;</code></pre>
       </section>
     </div>
   `
