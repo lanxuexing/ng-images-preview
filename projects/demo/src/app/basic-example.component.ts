@@ -173,7 +173,7 @@ import { ImagesPreviewDirective, ToolbarConfig, ImagesPreviewService, ImagesGall
 export class BasicExampleComponent {
   imageList = [
     'https://picsum.photos/id/10/2500/1667',
-    'https://picsum.photos/id/15/2500/1667',
+    'https://picsum.photos/id/1015/2500/1667',
     'https://picsum.photos/id/20/3670/2462',
     'https://picsum.photos/id/25/5000/3333',
     'https://picsum.photos/id/28/4928/3264',
