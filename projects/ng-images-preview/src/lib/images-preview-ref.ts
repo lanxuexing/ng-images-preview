@@ -85,6 +85,7 @@ export interface ImagesPreviewConfig {
  */
 export class ImagesPreviewRef {
     private readonly _afterClosed = new Subject<void>();
+    private isClosed = false;
 
     /**
      * Observable that emits when the preview is closed.
@@ -97,6 +98,9 @@ export class ImagesPreviewRef {
      * Closes the image preview.
      */
     close(): void {
+        if (this.isClosed) return;
+        this.isClosed = true;
+
         this.overlayCallback();
         this._afterClosed.next();
         this._afterClosed.complete();

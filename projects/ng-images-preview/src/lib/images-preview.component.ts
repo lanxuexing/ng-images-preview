@@ -285,7 +285,7 @@ interface ImageBufferItem {
       <!-- Thumbnails -->
       @if (images() && images()!.length > 1 && showThumbnails()) {
         <div class="thumbnail-strip" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" tabindex="-1">
-            @for (img of images(); track img; let i = $index) {
+            @for (img of images(); track i; let i = $index) {
                 <div 
                     #thumbRef
                     class="thumbnail-item" 
@@ -491,8 +491,9 @@ export class ImagesPreviewComponent {
         // defined in class body usually, but here to show logical grouping
         effect(
             () => {
-                // Initialize index from input
-                this.currentIndex.set(this.initialIndex());
+                // Initialize index from input (guarded against negative indices)
+                const idx = this.initialIndex();
+                this.currentIndex.set(idx >= 0 ? idx : 0);
             },
             { allowSignalWrites: true },
         );

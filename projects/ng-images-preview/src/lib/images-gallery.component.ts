@@ -1,6 +1,6 @@
 
 import { Component, ChangeDetectionStrategy, input, inject, ViewEncapsulation } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ImagesPreviewService } from './images-preview.service';
 
 /**
@@ -9,10 +9,10 @@ import { ImagesPreviewService } from './images-preview.service';
 @Component({
     selector: 'ng-images-gallery',
     standalone: true,
-    imports: [CommonModule, NgOptimizedImage],
+    imports: [CommonModule],
     template: `
     <div class="gallery-grid" [style.--grid-gap]="gap()" [style.--grid-cols]="columns()">
-      @for (img of images(); track img; let i = $index) {
+      @for (img of images(); track i; let i = $index) {
         <div 
           class="gallery-item" 
           (click)="openPreview(i)"
@@ -23,7 +23,7 @@ import { ImagesPreviewService } from './images-preview.service';
           role="button"
           aria-label="View image in full screen"
         >
-          <img [ngSrc]="img" [fill]="true" alt="Gallery image" class="gallery-img">
+          <img [src]="img" loading="lazy" alt="Gallery image" class="gallery-img">
         </div>
       }
     </div>

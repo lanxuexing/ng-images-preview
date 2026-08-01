@@ -134,7 +134,7 @@ export class ImagesPreviewDirective implements OnDestroy {
 
         this.ref = this.service.open(src, {
             images: this.previewImages,
-            initialIndex: this.previewImages.indexOf(src),
+            initialIndex: Math.max(0, this.previewImages.indexOf(src)),
             customTemplate: this.previewTemplate,
             toolbarConfig: this.toolbarConfig,
             srcset: this.srcset,
